@@ -59,10 +59,8 @@ def obtener_usuarios():
         lista_usuarios = []
         for usuario in usuarios:
             usuario_data = {
-                
-                'nombre': usuario.nombre,
                 'email': usuario.email,
-                
+                'password': usuario.password
             }
             lista_usuarios.append(usuario_data)
 
@@ -78,3 +76,4 @@ def obtener_usuarios():
 
     except Exception as e:
         return jsonify({'message': 'Error al obtener usuarios', 'error': str(e)}), 500
+
