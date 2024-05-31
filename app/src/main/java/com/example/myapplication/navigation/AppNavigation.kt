@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.view.HomeScreen
+import com.example.myapplication.ui.view.MainScreen
 
 
 @Composable
@@ -15,10 +16,8 @@ fun AppNavigation(){
             HomeScreen(navController)
         }
 
-        /*composable(route = AppScreen.informationScreen.route +"/{body}/{body1}"){
-            val body = it.arguments?.getString("body") ?: "0"
-            val body1 = it.arguments?.getString("body1") ?: "0"
-            InformationScreen(navController,body,body1)
-        }*/
+        composable(AppScreen.MainScreen.route) {
+            MainScreen(navController = navController)
+        }
     }
 }

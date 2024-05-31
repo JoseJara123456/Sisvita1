@@ -2,7 +2,6 @@
 
 package com.example.myapplication.ui.view
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,14 +34,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.data.repository.LoginRepository
 import com.example.myapplication.navigation.AppScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
-
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val repository = LoginRepository()
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -58,11 +62,11 @@ fun HomeScreen(navController: NavController) {
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF085394))
             )
         }
-    ){ it ->
-        println(it)
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -94,15 +98,34 @@ fun HomeScreen(navController: NavController) {
             Button(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
-                        navController.navigate(AppScreen.HomeScreen.route)
+                        coroutineScope.launch {
+                            val result = repository.getLogin(email, password)
+                            if (result.isSuccess) {
+                                val loginData = result.getOrNull()
+                                if (loginData != null && loginData.email == email && loginData.password == password) {
+                                    navController.navigate(AppScreen.MainScreen.route)
+                                } else {
+                                    errorMessage = "Correo o contraseña incorrectos."
+                                }
+                            } else {
+                                errorMessage = result.exceptionOrNull()?.message
+                            }
+                        }
                     } else {
-                        //Toast.makeText(context, "Please enter both email and password", Toast.LENGTH_SHORT).show()
+                        errorMessage = "Los campos de correo y contraseña no pueden estar vacíos."
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(Color(0xFF085394))
             ) {
                 Text("Login")
+            }
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         }
     }
@@ -114,6 +137,5 @@ fun HomeScreenPreview() {
     MyApplicationTheme {
         val navController = rememberNavController()
         HomeScreen(navController = navController)
-
     }
 }
