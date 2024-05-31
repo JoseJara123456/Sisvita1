@@ -10,10 +10,10 @@ login_bp = Blueprint('usuarios', __name__)
 def registrar_usuario_prueba():
     # Datos de ejemplo para el usuario
     datos_usuario = {
-        'usuarioid': 12,  # Proporciona un valor para UsuarioID
-        'nombre': 'Ejemplo Usuario',
-        'email': 'ejemplo@usuario.com',
-        'password': 'contraseña123',
+        'usuarioid': 17,  # Proporciona un valor para UsuarioID
+        'nombre': 'Ejemplo4 Usuario',
+        'email': 'ejemplo4@usuario.com',
+        'password': 'contraseña12345',
         'rol': 'Estudiante'
     }
 
