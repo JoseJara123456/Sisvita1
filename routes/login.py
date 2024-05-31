@@ -48,3 +48,33 @@ def registrar_usuario_prueba():
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error al agregar usuario', 'error': str(e)}), 500
+        
+@login_bp.route('/Login', methods=['GET'])
+def obtener_usuarios():
+    try:
+        # Consultar todos los usuarios en la base de datos
+        usuarios = Usuarios.query.all()
+
+        # Crear una lista de diccionarios con la información de los usuarios
+        lista_usuarios = []
+        for usuario in usuarios:
+            usuario_data = {
+                
+                'nombre': usuario.nombre,
+                'email': usuario.email,
+                
+            }
+            lista_usuarios.append(usuario_data)
+
+        # Preparar la respuesta
+        data = {
+            'message': 'Lista de usuarios',
+            'status': 200,
+            'data': lista_usuarios
+        }
+
+        # Devuelve la respuesta JSON
+        return jsonify(data), 200
+
+    except Exception as e:
+        return jsonify({'message': 'Error al obtener usuarios', 'error': str(e)}), 500
