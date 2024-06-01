@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from models.usuarios import Usuarios
 from utils.db import db
 from datetime import datetime
@@ -6,25 +6,23 @@ from datetime import datetime
 # Crear un Blueprint para las rutas de autenticación
 login_bp = Blueprint('usuarios', __name__)
 
-@login_bp.route('/registrar_usuario', methods=['GET'])
+@login_bp.route('/registrar_usuario', methods=['POST'])
 def registrar_usuario_prueba():
-    # Datos de ejemplo para el usuario
-    datos_usuario = {
-        'usuarioid': 18,  # Proporciona un valor para UsuarioID
-        'nombre': 'Ejemplo7 Usuario',
-        'email': 'ejemplo7@usuario.com',
-        'password': 'contraseña123457',
-        'rol': 'Estudiante'
-    }
-
-    # Crear una nueva instancia de Usuarios con los datos de ejemplo
-    nuevo_usuario = Usuarios(usuarioid=datos_usuario['usuarioid'],
-                             nombre=datos_usuario['nombre'],
-                             email=datos_usuario['email'],
-                             password=datos_usuario['password'],
-                             rol=datos_usuario['rol'])
-
     try:
+        # Obtener datos del request
+        datos_usuario = request.get_json()
+
+        # Validar si los datos necesarios están presentes en la solicitud
+        if not datos_usuario or not all(key in datos_usuario for key in ('usuarioid', 'nombre', 'email', 'password', 'rol')):
+            return jsonify({'message': 'Datos insuficientes'}), 400
+
+        # Crear una nueva instancia de Usuarios con los datos proporcionados
+        nuevo_usuario = Usuarios(usuarioid=datos_usuario['usuarioid'],
+                                 nombre=datos_usuario['nombre'],
+                                 email=datos_usuario['email'],
+                                 password=datos_usuario['password'],
+                                 rol=datos_usuario['rol'])
+
         # Agregar la nueva instancia a la base de datos
         db.session.add(nuevo_usuario)
         db.session.commit()
@@ -48,14 +46,12 @@ def registrar_usuario_prueba():
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error al agregar usuario', 'error': str(e)}), 500
-        
+    
+    
 @login_bp.route('/Login', methods=['GET'])
 def obtener_usuarios():
     try:
-        # Consultar todos los usuarios en la base de datos
         usuarios = Usuarios.query.all()
-
-        # Crear una lista de diccionarios con la información de los usuarios
         lista_usuarios = []
         for usuario in usuarios:
             usuario_data = {
@@ -77,3 +73,41 @@ def obtener_usuarios():
     except Exception as e:
         return jsonify({'message': 'Error al obtener usuarios', 'error': str(e)}), 500
 
+
+
+
+
+
+
+
+
+
+@login_bp.route('/Login2', methods=['POST'])
+def login2():
+    try:
+
+        data = request.get_json()
+        if not data or not data.get('email') or not data.get('password'):
+            return jsonify({'message': 'Email y password son requeridos'}), 400
+
+        email = data.get('email')
+        password = data.get('password')
+
+        
+        usuario = Usuarios.query.filter_by(email=email).first()
+        if usuario and usuario.password == password:
+            # Autenticación exitosa
+            response = {
+                'message': 'Inicio de sesión exitoso',
+                'status': 200,
+                'data': {
+                    'email': usuario.email
+                }
+            }
+            return jsonify(response), 200
+        else:
+            # Autenticación fallida
+            return jsonify({'message': 'Credenciales inválidas'}), 401
+
+    except Exception as e:
+        return jsonify({'message': 'Error al iniciar sesión', 'error': str(e)}), 500
