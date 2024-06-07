@@ -18,9 +18,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,15 +28,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.navigation.AppScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.example.myapplication.ui.viewmodel.LoginViewModel
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val viewModel: LoginViewModel = viewModel()
+    // Observar el estado de loginResponse y errorMessage desde el ViewModel
+    val loginResponse by viewModel.loginResponse
+    val errorMessage by viewModel.errorMessage
 
 
     Scaffold(
@@ -72,17 +73,19 @@ fun HomeScreen(navController: NavController) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
+            // Campo de texto para el correo
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = viewModel.email,
+                onValueChange = { viewModel.email = it },
                 label = { Text("Correo") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             )
+            // Campo de texto para la contraseña
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = viewModel.password,
+                onValueChange = { viewModel.password = it },
                 label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -90,17 +93,26 @@ fun HomeScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             )
+            // Botón de login
             Button(
                 onClick = {
-                    if (email.isNotEmpty() && password.isNotEmpty()) {
-                        navController.navigate(AppScreen.MainScreen.route)
+                    if (viewModel.email.isNotEmpty() && viewModel.password.isNotEmpty()) {
+                        viewModel.login() // Llamar al método de login en el ViewModel
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(Color(0xFF085394)),
-                enabled = email.isNotEmpty() && password.isNotEmpty()
+                enabled = viewModel.email.isNotEmpty() && viewModel.password.isNotEmpty() // Habilitar solo si ambos campos están llenos
             ) {
                 Text("Login")
+            }
+            // Navegar a la pantalla principal si el login fue exitoso
+            loginResponse?.let {
+                navController.navigate(AppScreen.MainScreen.route)
+            }
+            // Mostrar mensaje de error si hay alguno
+            if (errorMessage.isNotEmpty()) {
+                Text(text = errorMessage, color = Color.Red)
             }
 
         }

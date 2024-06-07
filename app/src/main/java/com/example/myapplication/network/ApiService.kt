@@ -1,11 +1,13 @@
 package com.example.myapplication.network
 
-import com.example.myapplication.data.model.Login
-import retrofit2.http.GET
+import com.example.myapplication.data.model.LoginRequest
+import com.example.myapplication.data.model.LoginResponse
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface ApiService {
-    @GET("/Login")
-    suspend fun getLogin( ) : Login
+    @POST("/Login2")
+    suspend fun login(@Body request: LoginRequest): LoginResponse
 
 }
 
