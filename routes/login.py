@@ -48,7 +48,7 @@ def registrar_usuario_prueba():
         return jsonify({'message': 'Error al agregar usuario', 'error': str(e)}), 500
     
     
-@login_bp.route('/Login', methods=['GET'])
+@login_bp.route('/ListaUsuarios', methods=['GET'])
 def obtener_usuarios():
     try:
         usuarios = Usuarios.query.all()
@@ -76,12 +76,6 @@ def obtener_usuarios():
 
 
 
-
-
-
-
-
-
 @login_bp.route('/Login2', methods=['POST'])
 def login2():
     try:
@@ -95,19 +89,23 @@ def login2():
 
         
         usuario = Usuarios.query.filter_by(email=email).first()
-        if usuario and usuario.password == password:
-            # Autenticación exitosa
-            response = {
-                'message': 'Inicio de sesión exitoso',
-                'status': 200,
-                'data': {
-                    'email': usuario.email
+        if usuario:
+            if usuario.password == password:
+                response = {
+                    'message': 'Inicio de sesión exitoso',
+                    'status': 200,
+                    'data': {
+                        'usuarioId': usuario.usuarioid,
+                        'nombre': usuario.nombre,
+                        'email': usuario.email,
+                        'rol': usuario.rol
+                    }
                 }
-            }
-            return jsonify(response), 200
+                return jsonify(response), 200
+            else:
+                return jsonify({'message': 'Contraseña incorrecta', 'email': email}), 401
         else:
-            # Autenticación fallida
-            return jsonify({'message': 'Credenciales inválidas'}), 401
+            return jsonify({'message': 'Usuario no encontrado', 'email': email}), 401
 
     except Exception as e:
         return jsonify({'message': 'Error al iniciar sesión', 'error': str(e)}), 500
