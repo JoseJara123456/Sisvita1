@@ -23,7 +23,8 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 db.init_app(app)
 
 app.register_blueprint(login_bp)
-app.register_blueprint(registro_bp)
+app.register_blueprint(registro_bp) # funcion registro
+
 
 
 if __name__ == '__main__':
