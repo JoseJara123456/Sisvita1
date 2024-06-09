@@ -10,11 +10,10 @@ class Tests(db.Model):
     especialista_id = db.Column(db.Integer)
     fecha_asignacion = db.Column(db.DateTime)
 
-    def __init__(self, testid, titulo, descripcion, pregunta_id, estudiante_id, especialista_id, fecha_asignacion):
+    def __init__(self, testid, titulo, descripcion, estudiante_id, especialista_id, fecha_asignacion):
         self.testid = testid
         self.titulo = titulo
         self.descripcion = descripcion
-        self.pregunta_id = pregunta_id
         self.estudiante_id = estudiante_id
         self.especialista_id = especialista_id
         self.fecha_asignacion = fecha_asignacion
@@ -24,7 +23,6 @@ class Tests(db.Model):
             'testid': self.testid,
             'titulo': self.titulo,
             'descripcion': self.descripcion,
-            'pregunta_id': self.pregunta_id,
             'estudiante_id': self.estudiante_id,
             'especialista_id': self.especialista_id,
             'fecha_asignacion': self.fecha_asignacion.isoformat() if self.fecha_asignacion else None,
