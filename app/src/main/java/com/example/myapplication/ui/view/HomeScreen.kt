@@ -41,7 +41,7 @@ fun HomeScreen(navController: NavController) {
     // Observar el estado de loginResponse y errorMessage desde el ViewModel
     val loginResponse by viewModel.loginResponse
     val errorMessage by viewModel.errorMessage
-
+    val userRole by viewModel.userRole
 
     Scaffold(
         topBar = {
@@ -106,18 +106,23 @@ fun HomeScreen(navController: NavController) {
             ) {
                 Text("Login")
             }
-            // Navegar a la pantalla principal si el login fue exitoso
+            // Navegar a la pantalla correspondiente si el login fue exitoso
             loginResponse?.let {
-                navController.navigate(AppScreen.MainScreen.route)
+                when (userRole) {
+                    "Estudiante" -> navController.navigate(AppScreen.EstudianteScreen.route)
+                    "Especialista" -> navController.navigate(AppScreen.EspecialistaScreen.route)
+                    else -> navController.navigate(AppScreen.HomeScreen.route)
+                }
             }
             // Mostrar mensaje de error si hay alguno
             if (errorMessage.isNotEmpty()) {
                 Text(text = errorMessage, color = Color.Red)
+                navController.navigate(AppScreen.HomeScreen.route)
             }
-
         }
     }
 }
+
 
 @Preview
 @Composable
