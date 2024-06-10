@@ -16,6 +16,7 @@ class LoginViewModel : ViewModel() {
     var password by mutableStateOf("")
     var loginResponse = mutableStateOf<LoginResponse?>(null)
     var errorMessage = mutableStateOf("")
+    var userRole = mutableStateOf("")
 
     private val loginRepository = LoginRepository()
 
@@ -25,10 +26,10 @@ class LoginViewModel : ViewModel() {
             try {
                 val response = loginRepository.login(request)
                 loginResponse.value = response
+                userRole.value = response.data.rol // Obtener el rol del usuario
             } catch (e: HttpException) {
                 errorMessage.value = e.message ?: "An error occurred"
             }
         }
     }
 }
-
