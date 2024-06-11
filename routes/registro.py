@@ -2,11 +2,12 @@ from flask import Blueprint, jsonify, request
 from models.usuarios import Usuarios
 from utils.db import db
 from datetime import datetime
+from werkzeug.security import generate_password_hash
 
 # Crea un Blueprint para la autenticación
 registro_bp = Blueprint('registrar_usuarios', __name__)
 
-@registro_bp.route('/registrar_usuario', methods=['POST'])
+@registro_bp.route('/registrar_usuarios', methods=['POST'])
 def registro_usuario():
     try:
         datos_usuario = request.get_json()
@@ -21,7 +22,8 @@ def registro_usuario():
             usuarioid=datos_usuario['usuarioid'],  # Asegúrate de incluir esto
             nombre=datos_usuario['nombre'],
             email=datos_usuario['email'],
-            password=datos_usuario['password'],
+            password=generate_password_hash(datos_usuario['password'], method='pbkdf2'),
+            #password=datos_usuario['password'],
             rol=datos_usuario['rol']
         )
 

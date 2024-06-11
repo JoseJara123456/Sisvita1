@@ -5,7 +5,7 @@ class Usuarios(db.Model):
     usuarioid = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100))
     email = db.Column(db.String(100))
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(200))
     rol = db.Column(db.String(20))
 
     def __init__(self, usuarioid, nombre, email, password, rol):

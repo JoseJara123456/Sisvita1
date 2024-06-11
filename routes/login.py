@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from models.usuarios import Usuarios
 from utils.db import db
 from datetime import datetime
+from werkzeug.security import check_password_hash
 
 # Crear un Blueprint para las rutas de autenticación
 login_bp = Blueprint('usuarios', __name__)
@@ -90,7 +91,7 @@ def login2():
         
         usuario = Usuarios.query.filter_by(email=email).first()
         if usuario:
-            if usuario.password == password:
+            if check_password_hash(usuario.password, password):
                 response = {
                     'message': 'Inicio de sesión exitoso',
                     'status': 200,
