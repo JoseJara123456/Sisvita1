@@ -5,7 +5,6 @@ class Tests(db.Model):
     testid = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(255))
     descripcion = db.Column(db.Text)
-    pregunta_id = db.Column(db.Integer)
     estudiante_id = db.Column(db.Integer)
     especialista_id = db.Column(db.Integer)
     fecha_asignacion = db.Column(db.DateTime)

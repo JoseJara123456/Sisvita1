@@ -3,17 +3,17 @@ from utils.db import db
 class Preguntas(db.Model):
     __tablename__ = 'preguntas'
     preguntaid = db.Column(db.Integer, primary_key=True)
-    testid = db.Column(db.Integer)
     contenido = db.Column(db.Text)
+    testid = db.Column(db.Integer)
 
-    def __init__(self, preguntaid, testid, contenido):
+    def __init__(self, preguntaid, contenido, testid):
         self.preguntaid = preguntaid
-        self.testid = testid
         self.contenido = contenido
+        self.testid = testid
         
     def serialize(self):
         return {
             'preguntaid': self.preguntaid,
-            'testid': self.testid,
             'contenido': self.contenido,
+            'testid': self.testid,
         }
