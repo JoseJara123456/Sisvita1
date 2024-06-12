@@ -29,10 +29,30 @@ import com.example.myapplication.navigation.AppScreen
 import com.example.myapplication.ui.viewmodel.LoginViewModel
 import com.example.myapplication.data.UserSession
 
+
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EstudianteScreen(navController: NavController) {
     val nombre = UserSession.nombre ?: "User"
+
+    val (expanded, setExpanded) = remember { mutableStateOf(false) }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -44,6 +64,27 @@ fun EstudianteScreen(navController: NavController) {
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
+                },
+                actions = {
+                    IconButton(onClick = { setExpanded(true) }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Menu",
+                            tint = Color.White
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { setExpanded(false) }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Logout") },
+                            onClick = {
+                                navController.navigate(AppScreen.HomeScreen.route)
+                                setExpanded(false)
+                            }
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF085394))
             )
@@ -63,16 +104,19 @@ fun EstudianteScreen(navController: NavController) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
+            //
+            /*
             Button(
                 onClick = {
-                    // Aquí puedes agregar la lógica para salir de la sesión o navegar a otra pantalla
+
                     navController.navigate(AppScreen.HomeScreen.route)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(Color(0xFF085394))
             ) {
                 Text("Logout")
-            }
+            )
+            */
         }
     }
 }
