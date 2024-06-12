@@ -104,19 +104,19 @@ fun EstudianteScreen(navController: NavController) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            //
-            /*
+
             Button(
                 onClick = {
 
-                    navController.navigate(AppScreen.HomeScreen.route)
+                    navController.navigate(AppScreen.RealizarTest.route)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(Color(0xFF085394))
             ) {
-                Text("Logout")
-            )
-            */
+                Text("Realizar Test")
+            }
+
         }
     }
 }
+

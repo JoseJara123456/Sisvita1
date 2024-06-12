@@ -8,7 +8,7 @@ import com.example.myapplication.ui.view.EspecialistaScreen
 import com.example.myapplication.ui.view.EstudianteScreen
 import com.example.myapplication.ui.view.HomeScreen
 import com.example.myapplication.ui.view.MainScreen
-
+import com.example.myapplication.ui.view.RealizarTest
 
 @Composable
 fun AppNavigation(){
@@ -27,6 +27,9 @@ fun AppNavigation(){
         }
         composable(AppScreen.EspecialistaScreen.route) {
             EspecialistaScreen(navController = navController)
+        }
+        composable(AppScreen.RealizarTest.route) {
+            RealizarTest(navController = navController)
         }
     }
 }
