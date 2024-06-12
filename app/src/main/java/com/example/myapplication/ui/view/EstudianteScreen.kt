@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,18 +23,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.navigation.AppScreen
+import com.example.myapplication.ui.viewmodel.LoginViewModel
+import com.example.myapplication.data.UserSession
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EstudianteScreen(navController: NavController) {
+    val nombre = UserSession.nombre ?: "User"
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Estudiante Screen",
+                        text = "Bienvenida $nombre",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = Color.White,

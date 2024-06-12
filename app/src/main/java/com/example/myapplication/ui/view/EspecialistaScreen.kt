@@ -32,7 +32,7 @@ fun EspecialistaScreen(navController: NavController) {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Especialista Screen",
+                        text = "{nombre}",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = Color.White,

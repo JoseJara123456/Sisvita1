@@ -42,6 +42,8 @@ fun HomeScreen(navController: NavController) {
     val loginResponse by viewModel.loginResponse
     val errorMessage by viewModel.errorMessage
     val userRole by viewModel.userRole
+    val idUsuario by viewModel.idUsuario
+
 
     Scaffold(
         topBar = {
