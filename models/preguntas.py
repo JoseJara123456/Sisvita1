@@ -4,16 +4,18 @@ class Preguntas(db.Model):
     __tablename__ = 'preguntas'
     preguntaid = db.Column(db.Integer, primary_key=True)
     contenido = db.Column(db.Text)
-    testid = db.Column(db.Integer)
+    tipotest_id = db.Column(db.Integer)
 
-    def __init__(self, preguntaid, contenido, testid):
+    def __init__(self, preguntaid, contenido, tipotest_id):
         self.preguntaid = preguntaid
         self.contenido = contenido
-        self.testid = testid
+        self.tipotest_id = tipotest_id
         
     def serialize(self):
         return {
             'preguntaid': self.preguntaid,
             'contenido': self.contenido,
-            'testid': self.testid,
+            'tipotest_id': self.tipotest_id,
         }
+    
+    
