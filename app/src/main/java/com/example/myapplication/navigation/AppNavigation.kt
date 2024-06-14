@@ -9,7 +9,15 @@ import com.example.myapplication.ui.view.EstudianteScreen
 import com.example.myapplication.ui.view.HomeScreen
 import com.example.myapplication.ui.view.MainScreen
 import com.example.myapplication.ui.view.RealizarTest
-
+import androidx.compose.runtime.remember
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.myapplication.ui.view.MostrarPreguntas
+import com.example.myapplication.ui.viewmodel.TestViewModel
+import com.example.myapplication.data.model.TestsYPreguntasResponse
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
@@ -31,5 +39,7 @@ fun AppNavigation(){
         composable(AppScreen.RealizarTest.route) {
             RealizarTest(navController = navController)
         }
-    }
-}
+
+
+
+}}
