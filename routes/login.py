@@ -6,48 +6,6 @@ from werkzeug.security import check_password_hash
 
 # Crear un Blueprint para las rutas de autenticación
 login_bp = Blueprint('usuarios', __name__)
-
-@login_bp.route('/registrar_usuario', methods=['POST'])
-def registrar_usuario_prueba():
-    try:
-        # Obtener datos del request
-        datos_usuario = request.get_json()
-
-        # Validar si los datos necesarios están presentes en la solicitud
-        if not datos_usuario or not all(key in datos_usuario for key in ('usuarioid', 'nombre', 'email', 'password', 'rol')):
-            return jsonify({'message': 'Datos insuficientes'}), 400
-
-        # Crear una nueva instancia de Usuarios con los datos proporcionados
-        nuevo_usuario = Usuarios(usuarioid=datos_usuario['usuarioid'],
-                                 nombre=datos_usuario['nombre'],
-                                 email=datos_usuario['email'],
-                                 password=datos_usuario['password'],
-                                 rol=datos_usuario['rol'])
-
-        # Agregar la nueva instancia a la base de datos
-        db.session.add(nuevo_usuario)
-        db.session.commit()
-
-        # Preparar la respuesta
-        resultado = {
-            'usuarioid': nuevo_usuario.usuarioid,
-            'nombre': nuevo_usuario.nombre,
-            'email': nuevo_usuario.email,
-            'rol': nuevo_usuario.rol
-        }
-        data = {
-            'message': 'Nuevo usuario agregado',
-            'status': 201,
-            'data': resultado
-        }
-
-        # Devuelve la respuesta JSON
-        return jsonify(data), 201
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'message': 'Error al agregar usuario', 'error': str(e)}), 500
-    
     
 @login_bp.route('/ListaUsuarios', methods=['GET'])
 def obtener_usuarios():
