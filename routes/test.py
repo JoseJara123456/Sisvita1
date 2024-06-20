@@ -1,10 +1,9 @@
 from flask import Blueprint, jsonify, request
 from models.tests import Tests
 from models.preguntas import Preguntas
-from models.opciones import Opciones
+from models.opcion import Opcion 
 from utils.db import db
 from datetime import datetime
-
 
 test_bp = Blueprint('test', __name__)
 
@@ -25,15 +24,14 @@ def vertest():
             
             for pregunta in preguntas:
                 pregunta_data = pregunta.serialize()
-                
-                # Obtener las opciones asociadas a esta pregunta
-                opciones = Opciones.query.filter_by(preguntaid=pregunta.preguntaid).all()
-                lista_opciones = [opcion.serialize() for opcion in opciones]
-                
-                # Agregar las opciones a pregunta_data
-                pregunta_data['opciones'] = lista_opciones
-                
                 lista_preguntas.append(pregunta_data)
+            
+            # Obtener las opciones asociadas a este test
+            opciones = Opcion.query.filter_by(tipotest_id=test.tipotest_id).all()
+            lista_opciones = [opcion.serialize() for opcion in opciones]
+            
+            # Agregar las opciones al test_data
+            test_data['opciones'] = lista_opciones
             
             # Agregar las preguntas al test_data
             test_data['preguntas'] = lista_preguntas
@@ -52,3 +50,5 @@ def vertest():
 
     except Exception as e:
         return jsonify({'message': 'Error al obtener tests y preguntas', 'error': str(e)}), 500
+
+
