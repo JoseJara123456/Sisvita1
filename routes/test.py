@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models.tests import Tests
 from models.preguntas import Preguntas
+from models.opciones import Opciones
 from utils.db import db
 from datetime import datetime
 
@@ -20,7 +21,19 @@ def vertest():
             
             # Obtener las preguntas asociadas a este test
             preguntas = Preguntas.query.filter_by(tipotest_id=test.tipotest_id).all()
-            lista_preguntas = [pregunta.serialize() for pregunta in preguntas]
+            lista_preguntas = []
+            
+            for pregunta in preguntas:
+                pregunta_data = pregunta.serialize()
+                
+                # Obtener las opciones asociadas a esta pregunta
+                opciones = Opciones.query.filter_by(preguntaid=pregunta.preguntaid).all()
+                lista_opciones = [opcion.serialize() for opcion in opciones]
+                
+                # Agregar las opciones a pregunta_data
+                pregunta_data['opciones'] = lista_opciones
+                
+                lista_preguntas.append(pregunta_data)
             
             # Agregar las preguntas al test_data
             test_data['preguntas'] = lista_preguntas
@@ -29,7 +42,7 @@ def vertest():
 
         # Preparar la respuesta
         data = {
-            'message': 'Lista de tests y preguntas',
+            'message': 'Lista de tests y preguntas con opciones',
             'status': 200,
             'data': lista_tests
         }
