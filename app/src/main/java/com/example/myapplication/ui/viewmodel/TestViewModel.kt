@@ -20,7 +20,7 @@ class TestViewModel : ViewModel() {
 
     var testsYPreguntas by mutableStateOf<List<TestsYPreguntasResponse.tipoTest>?>(null)
     var errorMessage by mutableStateOf("")
-
+    var opciones by mutableStateOf<List<TestsYPreguntasResponse.tipoTest>?>(null)
     private val testRepository = TestRepository()
 
     fun obtenerTestsYPreguntasUsuario() {

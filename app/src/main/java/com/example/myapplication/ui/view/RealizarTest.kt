@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.view
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,10 +43,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.data.model.TestsYPreguntasResponse
-import com.example.myapplication.data.model.beckOptions
-import com.example.myapplication.data.model.gad7Options
-import com.example.myapplication.data.model.hamAOptions
+
 import com.example.myapplication.ui.viewmodel.TestViewModel
+
+
+import androidx.compose.runtime.*
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,8 +61,11 @@ fun RealizarTest(navController: NavController) {
     viewModel.obtenerTestsYPreguntasUsuario()
     val testsYPreguntas = viewModel.testsYPreguntas
     val errorMessage = viewModel.errorMessage
+
     // Estado para rastrear el test seleccionado
     var selectedTest by remember { mutableStateOf<TestsYPreguntasResponse.tipoTest?>(null) }
+    // Estado para rastrear la opción seleccionada para cada pregunta
+    val selectedOptions = remember { mutableStateMapOf<Int, Int>() }
 
     Scaffold(
         topBar = {
@@ -71,16 +80,10 @@ fun RealizarTest(navController: NavController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (selectedTest != null) {
-                                selectedTest = null
-                            } else {
-                                navController.popBackStack()
-                            }
+                    if (selectedTest != null) {
+                        IconButton(onClick = { selectedTest = null }) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                         }
-                    ) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF085394))
@@ -91,65 +94,51 @@ fun RealizarTest(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Mostrar preguntas si hay un test seleccionado
             selectedTest?.let { test ->
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = test.nombre,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                        color = Color.Black,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Obtener las opciones correspondientes al tipo de test
-                    val opciones = when (test.tipotest_id) {
-                        1 -> beckOptions
-                        4 -> hamAOptions
-                        5 -> gad7Options
-                        else -> emptyList()
+                LazyColumn {
+                    item {
+                        Text(
+                            text = test.nombre,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            color = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
-
-                    // Estado para rastrear las selecciones de cada pregunta
-                    val seleccionadas = remember { mutableStateMapOf<Int, Int?>() }
-
-                    LazyColumn {
-                        items(test.preguntas) { pregunta ->
-                            Column(
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = pregunta.contenido,
-                                    fontSize = 18.sp,
-                                    color = Color.Black,
-                                    modifier = Modifier.padding(vertical = 4.dp)
-                                        .fillMaxWidth(),
-                                    textAlign = TextAlign.Start
-                                )
-                                // Mostrar las opciones como RadioButtons
-                                opciones.forEach { opcion ->
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.padding(vertical = 4.dp)
-                                            .fillMaxWidth()
-                                    ) {
-                                        RadioButton(
-                                            selected = seleccionadas[pregunta.preguntaid] == opcion.id,
-                                            onClick = { seleccionadas[pregunta.preguntaid] = opcion.id }
-                                        )
-                                        Text(
-                                            text = opcion.label,
-                                            modifier = Modifier.padding(start = 8.dp),
-                                            textAlign = TextAlign.Start
-                                        )
-                                    }
+                    itemsIndexed(test.preguntas ?: emptyList()) { index, pregunta ->
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = "${index + 1}. ${pregunta.contenido}",
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                            test.opciones.filter { it.tipotest_id == pregunta.tipotest_id }.forEach { opcion ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 4.dp, bottom = 4.dp)
+                                ) {
+                                    RadioButton(
+                                        selected = selectedOptions[pregunta.preguntaid] == opcion.opcionid,
+                                        onClick = {
+                                            selectedOptions[pregunta.preguntaid] = opcion.opcionid
+                                        }
+                                    )
+                                    Text(
+                                        text = opcion.contenido,
+                                        fontSize = 16.sp,
+                                        color = Color.Black,
+                                        modifier = Modifier.padding(start = 8.dp)
+                                    )
                                 }
                             }
                         }
@@ -169,34 +158,28 @@ fun RealizarTest(navController: NavController) {
                                 .shadow(4.dp, shape = RoundedCornerShape(12.dp))
                                 .border(width = 3.dp, color = Color(0xFF8BA4E7), shape = RoundedCornerShape(12.dp)),
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E8FE),contentColor = Color.Black)
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E8FE), contentColor = Color.Black)
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier=Modifier.fillMaxWidth()
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
                             ) {
-
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    Text(
-                                        text = test.nombre,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 20.sp,
-                                        color = Color.Black,
-                                        textAlign = TextAlign.Start,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                    Text(
-                                        text = test.descripcion,
-                                        fontSize = 18.sp,
-                                        color = Color(0xFF1E1F22),
-                                        textAlign = TextAlign.Start,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
+                                Text(
+                                    text = test.nombre,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = Color.Black,
+                                    textAlign = TextAlign.Start,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Text(
+                                    text = test.descripcion,
+                                    fontSize = 18.sp,
+                                    color = Color(0xFF1E1F22),
+                                    textAlign = TextAlign.Start,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                         }
                     }

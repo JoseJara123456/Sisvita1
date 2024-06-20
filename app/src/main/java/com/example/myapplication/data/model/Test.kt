@@ -9,6 +9,7 @@ data class TestsYPreguntasResponse(
     data class tipoTest(
         val descripcion: String,
         val nombre: String,
+        val opciones: List<Opciones>,
         val preguntas: List<Pregunta>,
         val tipotest_id: Int
 
@@ -17,6 +18,12 @@ data class TestsYPreguntasResponse(
     data class Pregunta(
         val contenido: String,
         val preguntaid: Int,
+        val tipotest_id: Int
+
+    )
+    data class Opciones(
+        val contenido: String,
+        val opcionid: Int,
         val tipotest_id: Int
 
     )
