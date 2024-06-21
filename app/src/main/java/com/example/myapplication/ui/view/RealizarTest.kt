@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -36,33 +35,31 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.data.model.TestsYPreguntasResponse
-
 import com.example.myapplication.ui.viewmodel.TestViewModel
-
-
+import com.example.myapplication.data.model.RespuestaRequest
 import androidx.compose.runtime.*
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RealizarTest(navController: NavController) {
+fun RealizarTest(navController: NavController, usuarioId: Int) {
     val viewModel: TestViewModel = viewModel()
     viewModel.obtenerTestsYPreguntasUsuario()
     val testsYPreguntas = viewModel.testsYPreguntas
     val errorMessage = viewModel.errorMessage
 
-    // Estado para rastrear el test seleccionado
     var selectedTest by remember { mutableStateOf<TestsYPreguntasResponse.tipoTest?>(null) }
-    // Estado para rastrear la opción seleccionada para cada pregunta
     val selectedOptions = remember { mutableStateMapOf<Int, Int>() }
     var showError by remember { mutableStateOf(false) }
 
@@ -97,7 +94,6 @@ fun RealizarTest(navController: NavController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Mostrar preguntas si hay un test seleccionado
             selectedTest?.let { test ->
                 LazyColumn {
                     item {
@@ -152,18 +148,11 @@ fun RealizarTest(navController: NavController) {
                                     showError = true
                                 } else {
                                     showError = false
-                                    // Aquí puedes manejar el envío de las respuestas
                                     val respuestas = selectedOptions.map { (preguntaId, opcionId) ->
-                                        "Pregunta $preguntaId -> Opción $opcionId"
+                                        RespuestaRequest(preguntaId, opcionId)
                                     }
-                                    // Por ejemplo, puedes imprimir las respuestas
-                                    respuestas.forEach { respuesta ->
-                                        Log.d("Respuestas", respuesta)
-                                    }
-                                    // O enviar las respuestas al backend
-                                    // viewModel.enviarRespuestas(respuestas)
-
-                                    // Reiniciar el estado y regresar al menú de tests
+                                    Log.d("f:","$usuarioId, $respuestas")
+                                    viewModel.enviarRespuestas(usuarioId, respuestas)
                                     selectedTest = null
                                     selectedOptions.clear()
                                 }
@@ -191,7 +180,6 @@ fun RealizarTest(navController: NavController) {
                     }
                 }
             } ?: run {
-                // Mostrar lista de tests si no hay un test seleccionado
                 testsYPreguntas?.let { tests ->
                     tests.forEach { test ->
                         Button(

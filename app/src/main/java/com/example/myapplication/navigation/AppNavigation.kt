@@ -36,8 +36,9 @@ fun AppNavigation(){
         composable(AppScreen.EspecialistaScreen.route) {
             EspecialistaScreen(navController = navController)
         }
-        composable(AppScreen.RealizarTest.route) {
-            RealizarTest(navController = navController)
+        composable(AppScreen.RealizarTest.route + "/{usuarioId}") { backStackEntry ->
+            val usuarioId = backStackEntry.arguments?.getString("usuarioId")?.toIntOrNull() ?: 0
+            RealizarTest(navController, usuarioId)
         }
 
         composable(AppScreen.MostrarTestRealizado.route) {

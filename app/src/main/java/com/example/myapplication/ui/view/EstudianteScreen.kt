@@ -52,11 +52,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.R
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EstudianteScreen(navController: NavController) {
     val nombre = UserSession.nombre ?: "User"
+    val usuarioId = UserSession.idUsuario?.toIntOrNull() ?: 0  // Obtener usuarioId de la sesión
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
 
     Scaffold(
@@ -117,28 +117,27 @@ fun EstudianteScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically,
-
             ) {
-                MenuButton(iconRes = R.drawable.stack, text = "Realizar Test", navController = navController)
-                MenuButton(iconRes = R.drawable.stack, text = "Solicitar Cita", navController = navController)
+                MenuButton(iconRes = R.drawable.stack, text = "Realizar Test", navController = navController, route = AppScreen.RealizarTest.route + "/$usuarioId")
+                MenuButton(iconRes = R.drawable.stack, text = "Solicitar Cita", navController = navController, route = AppScreen.MainScreen.route)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                MenuButton(iconRes = R.drawable.stack, text = "Registrar Avance", navController = navController)
-                MenuButton(iconRes = R.drawable.stack, text = "Visualizacion de Historial", navController = navController)
+                MenuButton(iconRes = R.drawable.stack, text = "Registrar Avance", navController = navController, route = AppScreen.MainScreen.route)
+                MenuButton(iconRes = R.drawable.stack, text = "Visualizacion de Historial", navController = navController, route = AppScreen.MainScreen.route)
             }
         }
     }
 }
 
 @Composable
-fun MenuButton(iconRes: Int, text: String, navController: NavController) {
+fun MenuButton(iconRes: Int, text: String, navController: NavController, route: String) {
     Button(
         onClick = {
-            navController.navigate(AppScreen.RealizarTest.route)
+            navController.navigate(route)
         },
         modifier = Modifier
             .size(180.dp, 180.dp)
