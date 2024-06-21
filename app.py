@@ -27,14 +27,11 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 db.init_app(app)
 
 app.register_blueprint(login_bp)
-app.register_blueprint(registro_bp) # funcion registro
+app.register_blueprint(registro_bp)
 app.register_blueprint(test_bp)
 app.register_blueprint(testrealizado_bp)
-<<<<<<< HEAD
 app.register_blueprint(test_fecha_id_bp)
-=======
 app.register_blueprint(respuestas_bp)
->>>>>>> 1ed7a46481a5a086946c459995404d94098b4551
 
 if __name__ == '__main__':
   app.run(port=5000)
