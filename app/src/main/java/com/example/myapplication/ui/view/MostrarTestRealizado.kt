@@ -52,23 +52,27 @@ import androidx.compose.material3.*
 
 import com.example.myapplication.ui.viewmodel.TestRealizadosViewModel
 
+// Anotación para indicar que se utiliza una API experimental de Material3
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MostrarTestRealizado(navController: NavController) {
+    // Inicializar el ViewModel para acceder y manipular los datos de los tests realizados
     val viewModel: TestRealizadosViewModel = viewModel()
 
-    // Obtenemos los tests realizados al iniciar la composición
+    // Llamar a la función para obtener los tests realizados cuando se inicia la composición
     viewModel.obtenerTestsRealizados()
 
-    // Observamos los datos del ViewModel
+    // Observar los datos del ViewModel para reaccionar a cambios
     val testsYRespuestas = viewModel.testsYRespuestas
     val errorMessage = viewModel.errorMessage
 
+    // Estructura básica de la pantalla con una barra superior
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tests Realizados") },
+                title = { Text("Tests Realizados") },  // Título de la barra superior
                 navigationIcon = {
+                    // Botón para regresar a la pantalla anterior
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
@@ -77,6 +81,7 @@ fun MostrarTestRealizado(navController: NavController) {
         }
     )
     { paddingValues ->
+        // Columna para organizar verticalmente los elementos dentro de la pantalla
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,43 +90,26 @@ fun MostrarTestRealizado(navController: NavController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Condición para mostrar la lista de tests si existe algún elemento
             if (testsYRespuestas != null && testsYRespuestas.isNotEmpty()) {
-                // Encabezados de la tabla
+                // Fila para encabezados de la tabla de resultados
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
-                    Text(
-                        text = "Test",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(2f)
-                    )
-                    Text(
-                        text = "Usuario",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "Fecha del Test",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "Puntaje",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
+                    // Encabezados para las columnas de la tabla
+                    listOf("Test", "Usuario", "Fecha del Test", "Puntaje").forEach { header ->
+                        Text(
+                            text = header,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
-                // Filas de la tabla
+                // Filas para mostrar cada test realizado
                 testsYRespuestas.forEach { test ->
                     Row(
                         modifier = Modifier
@@ -155,6 +143,7 @@ fun MostrarTestRealizado(navController: NavController) {
                     }
                 }
             } else {
+                // Mensaje cuando no hay tests disponibles
                 Text(
                     text = "No hay tests realizados.",
                     color = Color.Gray,
@@ -166,6 +155,7 @@ fun MostrarTestRealizado(navController: NavController) {
                 )
             }
 
+            // Mostrar mensaje de error si existe alguno
             if (errorMessage.isNotEmpty()) {
                 Text(
                     text = errorMessage,
@@ -177,9 +167,10 @@ fun MostrarTestRealizado(navController: NavController) {
     }
 }
 
-
+// Previsualización de la Composable para verificar su apariencia en tiempo de diseño
 @Preview
 @Composable
 fun MostrarTestRealizadoPreview() {
     MostrarTestRealizado(rememberNavController())
 }
+
