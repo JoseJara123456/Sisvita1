@@ -1,9 +1,10 @@
 package com.example.myapplication.ui.view
 
-
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,37 +52,30 @@ import androidx.compose.material3.*
 
 
 import com.example.myapplication.ui.viewmodel.TestRealizadosViewModel
-
-// Anotación para indicar que se utiliza una API experimental de Material3
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MostrarTestRealizado(navController: NavController) {
-    // Inicializar el ViewModel para acceder y manipular los datos de los tests realizados
     val viewModel: TestRealizadosViewModel = viewModel()
 
-    // Llamar a la función para obtener los tests realizados cuando se inicia la composición
+    // Obtenemos los tests realizados al iniciar la composición
     viewModel.obtenerTestsRealizados()
 
-    // Observar los datos del ViewModel para reaccionar a cambios
+    // Observamos los datos del ViewModel
     val testsYRespuestas = viewModel.testsYRespuestas
     val errorMessage = viewModel.errorMessage
 
-    // Estructura básica de la pantalla con una barra superior
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tests Realizados") },  // Título de la barra superior
+                title = { Text("Tests Realizados") },
                 navigationIcon = {
-                    // Botón para regresar a la pantalla anterior
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         }
-    )
-    { paddingValues ->
-        // Columna para organizar verticalmente los elementos dentro de la pantalla
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,60 +84,56 @@ fun MostrarTestRealizado(navController: NavController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Condición para mostrar la lista de tests si existe algún elemento
             if (testsYRespuestas != null && testsYRespuestas.isNotEmpty()) {
-                // Fila para encabezados de la tabla de resultados
+                // Encabezados de la tabla
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
-                    // Encabezados para las columnas de la tabla
-                    listOf("Test", "Usuario", "Fecha del Test", "Puntaje").forEach { header ->
-                        Text(
-                            text = header,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                    Text("Test", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(2f))
+                    Text("Usuario", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                    Text("Fecha del Test", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                    Text("Puntaje", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
                 }
-                // Filas para mostrar cada test realizado
+                // Filas de la tabla
                 testsYRespuestas.forEach { test ->
+                    val semaforoColor = when (test.nombre_test) {
+                        "Test de Beck" -> when {
+                            test.puntaje <= 21 -> Color.Green // Ansiedad muy baja
+                            test.puntaje in 22..35 -> Color(0xFFFFA500) // Ansiedad moderada (ámbar)
+                            else -> Color.Red // Ansiedad severa
+                        }
+                        "Test HAM-A" -> when {
+                            test.puntaje <= 23 -> Color.Green // Ansiedad muy baja
+                            test.puntaje in 23..47 -> Color(0xFFFFA500) // Ansiedad moderada (ámbar)
+                            else -> Color.Red // Ansiedad severa
+                        }
+                        "Test GAD-7" -> when {
+                            test.puntaje <= 9 -> Color.Green // Estrés muy bajo
+                            test.puntaje in 10..19 -> Color(0xFFFFA500) // Estrés moderado (ámbar)
+                            else -> Color.Red // Estrés severo
+                        }
+                        else -> when {
+                            test.puntaje >= 80 -> Color.Green
+                            test.puntaje >= 50 -> Color.Yellow
+                            else -> Color.Red
+                        }
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
                     ) {
-                        Text(
-                            text = test.nombre_test,
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(2f)
-                        )
-                        Text(
-                            text = test.nombre_usuario,
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = test.fecha_test,
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = test.puntaje.toString(),
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
+                        Text(test.nombre_test, fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(2f))
+                        Text(test.nombre_usuario, fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        Text(test.fecha_test, fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        Box(modifier = Modifier.weight(1f).background(color = semaforoColor), contentAlignment = Alignment.Center) {
+                            Text(test.puntaje.toString(), fontSize = 16.sp, textAlign = TextAlign.Center)
+                        }
                     }
                 }
             } else {
-                // Mensaje cuando no hay tests disponibles
                 Text(
                     text = "No hay tests realizados.",
                     color = Color.Gray,
@@ -155,7 +145,6 @@ fun MostrarTestRealizado(navController: NavController) {
                 )
             }
 
-            // Mostrar mensaje de error si existe alguno
             if (errorMessage.isNotEmpty()) {
                 Text(
                     text = errorMessage,
@@ -167,10 +156,8 @@ fun MostrarTestRealizado(navController: NavController) {
     }
 }
 
-// Previsualización de la Composable para verificar su apariencia en tiempo de diseño
 @Preview
 @Composable
 fun MostrarTestRealizadoPreview() {
     MostrarTestRealizado(rememberNavController())
 }
-
