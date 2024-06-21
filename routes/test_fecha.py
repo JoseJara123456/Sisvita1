@@ -13,7 +13,7 @@ def vertestfecha():
         # Obtener parámetros de filtro desde la solicitud
         fecha_test = request.args.get('fecha_test')
         tipo_test = request.args.get('tipo_test')
-        
+        puntaje_obtenido = request.args.get('puntaje_obtenido')
         
         # Construir la consulta de base de datos
         query = testRealizados.query
@@ -25,13 +25,16 @@ def vertestfecha():
         if tipo_test:
             query = query.filter(testRealizados.tipotest_id == int(tipo_test))
         
+        if puntaje_obtenido:
+            query = query.filter(testRealizados.puntaje >= int(puntaje_obtenido))
+        
         # Ejecutar la consulta
         tests = query.all()
         
         lista_tests = []
         
         for test in tests:
-            # Obtener el nombre del usuario asociado al estudiante_id
+            # Obtener el nombre del usuario asociado al usuarioid
             usuario = Usuarios.query.get(test.usuarioid)
             nombre_usuario = usuario.nombre if usuario else None
             
