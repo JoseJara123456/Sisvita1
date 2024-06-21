@@ -2,7 +2,7 @@ from utils.db import db
 
 class testRealizados(db.Model):
     __tablename__ = 'test_realizados'
-    test_id = db.Column(db.Integer, primary_key=True)
+    test_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fecha_test = db.Column(db.DateTime)
     tipotest_id = db.Column(db.Integer)
     usuarioid = db.Column(db.Integer)

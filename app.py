@@ -4,6 +4,7 @@ from routes.registro import registro_bp
 from routes.test import test_bp
 from routes.resultadostest import testrealizado_bp
 from routes.test_fecha import test_fecha_id_bp
+from routes.respuestas import respuestas_bp
 from flask_sqlalchemy import SQLAlchemy
 from config import DATABASE_CONNECTION_URI
 from flask_cors import CORS
@@ -29,7 +30,11 @@ app.register_blueprint(login_bp)
 app.register_blueprint(registro_bp) # funcion registro
 app.register_blueprint(test_bp)
 app.register_blueprint(testrealizado_bp)
+<<<<<<< HEAD
 app.register_blueprint(test_fecha_id_bp)
+=======
+app.register_blueprint(respuestas_bp)
+>>>>>>> 1ed7a46481a5a086946c459995404d94098b4551
 
 if __name__ == '__main__':
   app.run(port=5000)
