@@ -52,8 +52,6 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RealizarTest(navController: NavController) {
@@ -66,6 +64,7 @@ fun RealizarTest(navController: NavController) {
     var selectedTest by remember { mutableStateOf<TestsYPreguntasResponse.tipoTest?>(null) }
     // Estado para rastrear la opción seleccionada para cada pregunta
     val selectedOptions = remember { mutableStateMapOf<Int, Int>() }
+    var showError by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -125,7 +124,9 @@ fun RealizarTest(navController: NavController) {
                             test.opciones.filter { it.tipotest_id == pregunta.tipotest_id }.forEach { opcion ->
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 4.dp, bottom = 4.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, top = 4.dp, bottom = 4.dp)
                                 ) {
                                     RadioButton(
                                         selected = selectedOptions[pregunta.preguntaid] == opcion.opcionid,
@@ -141,6 +142,51 @@ fun RealizarTest(navController: NavController) {
                                     )
                                 }
                             }
+                        }
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                if (selectedOptions.size < (test.preguntas?.size ?: 0)) {
+                                    showError = true
+                                } else {
+                                    showError = false
+                                    // Aquí puedes manejar el envío de las respuestas
+                                    val respuestas = selectedOptions.map { (preguntaId, opcionId) ->
+                                        "Pregunta $preguntaId -> Opción $opcionId"
+                                    }
+                                    // Por ejemplo, puedes imprimir las respuestas
+                                    respuestas.forEach { respuesta ->
+                                        Log.d("Respuestas", respuesta)
+                                    }
+                                    // O enviar las respuestas al backend
+                                    // viewModel.enviarRespuestas(respuestas)
+
+                                    // Reiniciar el estado y regresar al menú de tests
+                                    selectedTest = null
+                                    selectedOptions.clear()
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E8FE), contentColor = Color.Black)
+                        ) {
+                            Text(
+                                text = "Enviar Respuestas",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = Color.Black
+                            )
+                        }
+                        if (showError) {
+                            Text(
+                                text = "Por favor, responde todas las preguntas antes de enviar.",
+                                color = Color.Red,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
                         }
                     }
                 }
@@ -195,12 +241,4 @@ fun RealizarTest(navController: NavController) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RealizarTestPreview() {
-    // Proporciona un NavController falso y un ViewModel falso para la previsualización
-    val navController = rememberNavController()
-    RealizarTest(navController = navController)
 }

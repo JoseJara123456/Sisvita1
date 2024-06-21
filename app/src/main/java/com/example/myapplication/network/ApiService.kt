@@ -3,6 +3,7 @@ package com.example.myapplication.network
 import com.example.myapplication.data.model.LoginRequest
 import com.example.myapplication.data.model.LoginResponse
 import com.example.myapplication.data.model.TestsYPreguntasResponse
+import com.example.myapplication.data.model.TestsRealizadosResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
@@ -15,6 +16,9 @@ interface ApiService {
 
     @GET("/VerTest")
     suspend fun obtenerTestsYPreguntasUsuario(): TestsYPreguntasResponse
+
+    @GET("/VerTestRealizados")
+    suspend fun obtenerTestsRealizados(): TestsRealizadosResponse
 
 }
 
