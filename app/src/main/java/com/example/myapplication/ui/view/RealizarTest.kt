@@ -47,8 +47,8 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
-
-
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 
 
 @OptIn(ExperimentalMaterial3Api::class)

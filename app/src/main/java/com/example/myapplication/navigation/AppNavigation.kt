@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.view.EspecialistaScreen
+import com.example.myapplication.ui.view.EspecialistaFiltro
 import com.example.myapplication.ui.view.EstudianteScreen
 import com.example.myapplication.ui.view.HomeScreen
 import com.example.myapplication.ui.view.MainScreen
@@ -44,5 +45,8 @@ fun AppNavigation(){
         composable(AppScreen.MostrarTestRealizado.route) {
             MostrarTestRealizado(navController = navController)
         }
-
-}}
+        composable(route = AppScreen.EspecialistaFiltro.route) {
+            EspecialistaFiltro(navController = navController)
+        }
+    }
+}

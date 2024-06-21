@@ -42,6 +42,7 @@ import com.example.myapplication.navigation.AppScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.ui.viewmodel.LoginViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     val viewModel: LoginViewModel = viewModel()
@@ -134,8 +135,8 @@ fun HomeScreen(navController: NavController) {
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
-                .border(1.dp, Color.White),
-            colors = ButtonDefaults.buttonColors(Color(0xFF085394)),
+                .border(1.dp,  Color(0xFF512DA8)),
+            //colors = ButtonDefaults.buttonColors(Color(0xFF085394)),
                 enabled = viewModel.email.isNotEmpty() && viewModel.password.isNotEmpty() // Habilitar solo si ambos campos están llenos
             ) {
                 Text("Login", color = Color.White)

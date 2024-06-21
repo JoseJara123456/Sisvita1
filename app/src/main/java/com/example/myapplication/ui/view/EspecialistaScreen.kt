@@ -112,7 +112,8 @@ fun EspecialistaScreen(navController: NavController) {
                 Button(
                     onClick = {
                         // Aquí puedes agregar la lógica para salir de la sesión o navegar a otra pantalla
-                        navController.navigate(AppScreen.MostrarTestRealizado.route)
+                        navController.navigate(AppScreen.EspecialistaFiltro.route)
+                        //navController.navigate(AppScreen.MostrarTestRealizado.route)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(Color(0xFF085394))
