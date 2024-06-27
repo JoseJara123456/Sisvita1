@@ -35,7 +35,8 @@ def vertestrealizado():
                 'fecha_test': test.fecha_test.strftime('%Y-%m-%d') if test.fecha_test else None,
                 'nombre_usuario': nombre_usuario,
                 'nombre_test': nombre_test,
-                'puntaje': test.puntaje
+                'puntaje': test.puntaje,
+                'nivel_ansiedad':test.nivel_ansiedad
             }
             # Agregar el diccionario creado a la lista de tests
             lista_tests.append(test_data)

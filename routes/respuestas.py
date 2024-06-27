@@ -36,12 +36,16 @@ def enviar_respuestas():
 
         tipotest_id = opcion.tipotest_id
 
+        # Calcular el nivel de ansiedad basado en el tipotest_id y el total_puntaje
+        nivel_ansiedad = calcular_nivel_ansiedad(tipotest_id, total_puntaje)
+
         # Guardar en la tabla `test_realizados` una vez, fuera del bucle
         test_realizado = testRealizados(
             fecha_test=datetime.now(),
             tipotest_id=tipotest_id,
             usuarioid=usuario_id,
-            puntaje=total_puntaje
+            puntaje=total_puntaje,
+            nivel_ansiedad=nivel_ansiedad
         )
         db.session.add(test_realizado)
         db.session.commit()
@@ -50,7 +54,7 @@ def enviar_respuestas():
         data = {
             'message': 'Respuestas enviadas correctamente',
             'status': 200,
-            'total_puntaje': total_puntaje
+            'nivel_ansiedad': nivel_ansiedad
         }
 
         return jsonify(data), 200
@@ -79,3 +83,28 @@ def obtener_puntaje_por_opcion_id(opcion_id):
 
     # Obtener el puntaje correspondiente a la opcionId
     return puntajes.get(opcion_id, 0)  # Retorna 0 si no se encuentra en el diccionario
+
+def calcular_nivel_ansiedad(tipotest_id, puntaje):
+    if tipotest_id == 1:
+        if puntaje <= 21:
+            return 'leve'
+        elif 22 <= puntaje <= 35:
+            return 'moderada'
+        else:
+            return 'grave'
+    elif tipotest_id == 4:
+        if puntaje <= 23:
+            return 'leve'
+        elif 24 <= puntaje <= 47:
+            return 'moderada'
+        else:
+            return 'grave'
+    elif tipotest_id == 5:
+        if puntaje <= 9:
+            return 'leve'
+        elif 10 <= puntaje <= 19:
+            return 'moderada'
+        else:
+            return 'grave'
+    else:
+        return 'Nivel de ansiedad no definido'
