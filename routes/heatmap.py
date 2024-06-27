@@ -2,8 +2,7 @@ from flask import Blueprint, jsonify
 from models.estudiante import Estudiante
 from models.test_realizado import testRealizados
 from models.resultados import Resultados
-from models.coordenadas import Coordenada
-from models.distritos import Distrito
+from models.ubigeo import Ubigeo
 from utils.db import db
 
 heatmap_bp = Blueprint('heatmap', __name__)
@@ -11,43 +10,34 @@ heatmap_bp = Blueprint('heatmap', __name__)
 @heatmap_bp.route('/heatmap', methods=['GET'])
 def get_heatmap_data():
     try:
-        # Imprimir la consulta generada
         query = db.session.query(
-            Estudiante.nombre,
-            Estudiante.departamento_id,
-            Estudiante.provincia_id,
-            Estudiante.distrito_id,
+            testRealizados.test_id,
+            Estudiante.usuarioid,
             Resultados.resultado,
-            Coordenada.latitude,
-            Coordenada.longitude
+            Ubigeo.ubigeoid,
+            Ubigeo.latitud,
+            Ubigeo.longitud
         ).join(testRealizados, Estudiante.usuarioid == testRealizados.usuarioid)\
          .join(Resultados, testRealizados.test_id == Resultados.test_id)\
-         .join(Coordenada, Estudiante.distrito_id == Coordenada.distrito_id) 
+         .join(Ubigeo, Estudiante.ubigeoid == Ubigeo.ubigeoid) 
 
-        print(str(query))  # Imprime la consulta SQL generada
-        
-        estudiantes = query.all()
-
-        # Verificar si se obtuvieron resultados
-        if not estudiantes:
-            print("No se encontraron resultados en la consulta.")
+        resultados = query.all()
 
         lista_resultados = []
-        for estudiante in estudiantes:
+        for resultado in resultados:
             resultado_dict = {
-                "nombre": estudiante.nombre,
-                "departamento_id": estudiante.departamento_id,
-                "provincia_id": estudiante.provincia_id,
-                "distrito_id": estudiante.distrito_id,
-                "latitude": estudiante.latitude,
-                "longitude": estudiante.longitude,
-                "nivel_ansiedad": estudiante.resultado
+                "test_id": resultado.test_id,
+                "usuarioid": resultado.usuarioid,
+                "resultado_nivel_ansiedad": resultado.resultado,
+                "ubigeoid": resultado.ubigeoid,
+                "latitud": resultado.latitud,
+                "longitud": resultado.longitud
             }
             lista_resultados.append(resultado_dict)
 
         # Preparar la respuesta
         data = {
-            'message': 'Lista de resultados',
+            'message': 'Lista de ubicación y nivel de ansiedad',
             'status': 200,
             'data': lista_resultados
         }
@@ -57,7 +47,3 @@ def get_heatmap_data():
 
     except Exception as e:
         return jsonify({'message': 'Error al obtener resultados', 'error': str(e)}), 500
-
-
-
-        
