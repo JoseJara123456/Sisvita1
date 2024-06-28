@@ -6,8 +6,8 @@ class Ubigeo(db.Model):
     departamento = db.Column(db.String(100), nullable=False)
     provincia = db.Column(db.String(100), nullable=False)
     distrito = db.Column(db.String(100), nullable=False)
-    latitud = db.Column(db.Numeric, nullable=True)
-    longitud = db.Column(db.Numeric, nullable=True)
+    latitud = db.Column(db.Float, nullable=True)
+    longitud = db.Column(db.Float, nullable=True)
 
     def __init__(self, departamento, provincia, distrito, latitud=None, longitud=None):
         self.departamento = departamento
