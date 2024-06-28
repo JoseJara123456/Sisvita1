@@ -3,7 +3,7 @@ package com.example.myapplication.data.model
 data class RespuestaResponse(
     val message: String,
     val status: Int,
-    val total_puntante: Int
+    val nivel_ansiedad: String
 )
 data class EnviarRespuestasRequest(
     val usuarioId: Int,
