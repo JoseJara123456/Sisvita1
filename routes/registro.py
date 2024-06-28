@@ -21,7 +21,8 @@ def registro_estudiante():
             nombre=datos_usuario['nombre'],
             email=datos_usuario['email'],
             password=generate_password_hash(datos_usuario['password'], method='pbkdf2'),
-            rol=datos_usuario['rol']
+            rol=datos_usuario['rol'],
+            ubigeoid=datos_usuario['ubigeoid']
         )
 
         db.session.add(nuevo_estudiante)
@@ -31,7 +32,8 @@ def registro_estudiante():
             'usuarioid': nuevo_estudiante.usuarioid,
             'nombre': nuevo_estudiante.nombre,
             'email': nuevo_estudiante.email,
-            'rol': nuevo_estudiante.rol
+            'rol': nuevo_estudiante.rol,
+            'ubigeoid':nuevo_estudiante.ubigeoid
         }
         data = {
             'message': 'Nuevo estudiante registrado exitosamente',
