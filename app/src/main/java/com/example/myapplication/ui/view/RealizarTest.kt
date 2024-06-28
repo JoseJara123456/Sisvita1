@@ -46,9 +46,8 @@ import androidx.compose.runtime.*
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.*
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.material3.AlertDialog
+import com.example.myapplication.data.UserSession
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,11 +57,12 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
     viewModel.obtenerTestsYPreguntasUsuario()
     val testsYPreguntas = viewModel.testsYPreguntas
     val errorMessage = viewModel.errorMessage
-
     var selectedTest by remember { mutableStateOf<TestsYPreguntasResponse.tipoTest?>(null) }
     val selectedOptions = remember { mutableStateMapOf<Int, Int>() }
     var showError by remember { mutableStateOf(false) }
-
+    var showScoreDialog by remember { mutableStateOf(false) }
+    val nivel = viewModel.nivel
+    val nombre = UserSession.nombre ?: "User"
     Scaffold(
         topBar = {
             TopAppBar(
@@ -151,8 +151,10 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
                                     val respuestas = selectedOptions.map { (preguntaId, opcionId) ->
                                         RespuestaRequest(preguntaId, opcionId)
                                     }
-                                    Log.d("f:","$usuarioId, $respuestas")
+                                    Log.d("f:", "$usuarioId, $respuestas")
                                     viewModel.enviarRespuestas(usuarioId, respuestas)
+
+                                    showScoreDialog = true
                                     selectedTest = null
                                     selectedOptions.clear()
                                 }
@@ -228,5 +230,20 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
                 }
             }
         }
+    }
+
+    if (showScoreDialog) {
+        AlertDialog(
+            onDismissRequest = { showScoreDialog = false },
+            title = { Text(text = "Nivel de Ansiedad") },
+            text = { Text(text = "$nombre tu ansiedad es $nivel") },
+            confirmButton = {
+                Button(
+                    onClick = { showScoreDialog = false }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
