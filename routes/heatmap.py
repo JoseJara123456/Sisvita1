@@ -1,11 +1,18 @@
 from flask import Blueprint, jsonify
 from models.estudiante import Estudiante
 from models.test_realizado import testRealizados
-from models.resultados import Resultados
 from models.ubigeo import Ubigeo
 from utils.db import db
 
 heatmap_bp = Blueprint('heatmap', __name__)
+
+def map_nivel_ansiedad(nivel):
+    mapping = {
+        "leve": 1,
+        "moderada": 2,
+        "grave": 3
+    }
+    return mapping.get(nivel)
 
 @heatmap_bp.route('/heatmap', methods=['GET'])
 def get_heatmap_data():
@@ -13,12 +20,11 @@ def get_heatmap_data():
         query = db.session.query(
             testRealizados.test_id,
             Estudiante.usuarioid,
-            Resultados.resultado,
+            testRealizados.nivel_ansiedad,
             Ubigeo.ubigeoid,
             Ubigeo.latitud,
             Ubigeo.longitud
         ).join(testRealizados, Estudiante.usuarioid == testRealizados.usuarioid)\
-         .join(Resultados, testRealizados.test_id == Resultados.test_id)\
          .join(Ubigeo, Estudiante.ubigeoid == Ubigeo.ubigeoid) 
 
         resultados = query.all()
@@ -28,21 +34,19 @@ def get_heatmap_data():
             resultado_dict = {
                 "test_id": resultado.test_id,
                 "usuarioid": resultado.usuarioid,
-                "resultado_nivel_ansiedad": resultado.resultado,
+                "nivel_ansiedad": map_nivel_ansiedad(resultado.nivel_ansiedad),
                 "ubigeoid": resultado.ubigeoid,
                 "latitud": resultado.latitud,
                 "longitud": resultado.longitud
             }
             lista_resultados.append(resultado_dict)
 
-        # Preparar la respuesta
         data = {
-            'message': 'Lista de ubicación y nivel de ansiedad',
+            'message': 'Lista de ubicación y nivel de ansiedad de estudiantes',
             'status': 200,
             'data': lista_resultados
         }
 
-        # Devuelve la respuesta JSON
         return jsonify(data), 200
 
     except Exception as e:
