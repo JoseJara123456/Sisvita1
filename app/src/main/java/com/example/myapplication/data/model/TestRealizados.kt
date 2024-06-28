@@ -12,7 +12,8 @@ data class TestsRealizadosResponse(
         val nombre_test: String,    // Nombre del test
         val nombre_usuario: String, // Nombre del usuario que realizó el test
         val puntaje: Int,           // Puntaje obtenido en el test
-        val test_id: Int            // Identificador único del test
+        val test_id: Int,            // Identificador único del test
+        val nivel_ansiedad: String
     )
 
 }
