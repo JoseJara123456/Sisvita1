@@ -1,17 +1,15 @@
 package com.example.myapplication.network
 
+import com.example.myapplication.data.model.EnviarRespuestasRequest
+import com.example.myapplication.data.model.HeatMapResponse
 import com.example.myapplication.data.model.LoginRequest
 import com.example.myapplication.data.model.LoginResponse
-import com.example.myapplication.data.model.TestsYPreguntasResponse
-import com.example.myapplication.data.model.TestsRealizadosResponse
 import com.example.myapplication.data.model.RespuestaResponse
-
+import com.example.myapplication.data.model.TestsRealizadosResponse
+import com.example.myapplication.data.model.TestsYPreguntasResponse
 import retrofit2.http.Body
-import retrofit2.http.POST
 import retrofit2.http.GET
-import retrofit2.http.Path
-import com.example.myapplication.data.UserSession
-import com.example.myapplication.data.model.EnviarRespuestasRequest
+import retrofit2.http.POST
 
 interface ApiService {
 
@@ -24,9 +22,10 @@ interface ApiService {
     @GET("/VerTestRealizados")
     suspend fun obtenerTestsRealizados(): TestsRealizadosResponse
 
-
     @POST("/enviarRespuestas")
     suspend fun enviarRespuestas(@Body request: EnviarRespuestasRequest): RespuestaResponse
 
+    @GET("/heatmap")
+    suspend fun getHeatMapData(): HeatMapResponse
 }
 
