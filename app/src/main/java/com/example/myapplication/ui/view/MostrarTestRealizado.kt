@@ -259,8 +259,4 @@ fun FilterDropdown(
 fun MostrarTestRealizadoPreview() {
     MostrarTestRealizado(rememberNavController())
 }
-@Preview
-@Composable
-fun MostrarTestRealizadoPreview() {
-    MostrarTestRealizado(rememberNavController())
-}
+
