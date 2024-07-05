@@ -11,15 +11,30 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-// Clase que extiende de ViewModel, proporcionando un ámbito de datos persistente a lo largo del ciclo de vida de las vistas asociadas
+import android.util.Log
+
+import com.example.myapplication.data.SelectedTestData
+import com.example.myapplication.data.model.TestData
+
+
+
 class TestRealizadosViewModel : ViewModel() {
 
-    // Propiedades observables que se actualizarán en la UI cuando cambien
     var testsYRespuestas by mutableStateOf<List<TestsRealizadosResponse.TestReali>?>(null)  // Lista de tests realizados
     var errorMessage by mutableStateOf("")  // Mensaje de error para mostrar en la UI
-
-    // Instancia del repositorio que contiene métodos para obtener datos de la API
     private val testRealizadosRepository = TestRealizadosRepository()
+
+    private var selectedTestData: TestData? = null
+
+    fun saveSelectedTestData(testData: TestData) {
+        SelectedTestData.saveTestData(testData)
+    }
+
+    fun getSelectedTestData(): TestData? {
+        Log.d("TestRealizadosViewModel", "Returning Selected Test Data: $selectedTestData")
+        return selectedTestData
+    }
+
 
     // Función para obtener los tests realizados. Se lanza dentro del ámbito del ViewModel para manejar la corutina
     fun obtenerTestsRealizados() {
@@ -35,20 +50,6 @@ class TestRealizadosViewModel : ViewModel() {
             }
         }
     }
-    fun filtrarTests(fechaTest: String, tipoTest: String, puntaje: String) {
-        viewModelScope.launch {
-            try {
-                val response = testRealizadosRepository.obtenerTestsRealizados()
-                if (response.status == 200) {
-                    testsYRespuestas = response.data
-                } else {
-                    errorMessage = response.message
-                }
-            } catch (e: IOException) {
-                errorMessage = "Error de red. Por favor, inténtalo de nuevo."
-            } catch (e: HttpException) {
-                errorMessage = "Error al obtener datos del servidor."
-            }
-        }
-    }
+
+
 }

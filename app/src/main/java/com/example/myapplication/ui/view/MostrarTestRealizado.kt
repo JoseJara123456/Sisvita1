@@ -61,6 +61,8 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import com.example.myapplication.R
+import com.example.myapplication.data.model.TestData
+import com.example.myapplication.navigation.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,10 +101,7 @@ fun MostrarTestRealizado(navController: NavController) {
                 title = { Text(stringResource(R.string.tests_realizados)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(
-                            R.string.back
-                        )
-                        )
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors()
@@ -111,7 +110,19 @@ fun MostrarTestRealizado(navController: NavController) {
         bottomBar = {
             if (selectedRow != null) {
                 Button(
-                    onClick = { navController.navigate(AppScreen.EspecialistaFiltro.route) },
+                    onClick = {
+                        selectedRow?.let {
+                            val selectedTest = filteredTests[it]
+                            val testData = TestData(
+                                nombreTest = selectedTest.nombre_test,
+                                nombreUsuario = selectedTest.nombre_usuario,
+                                nivelAnsiedad = selectedTest.nivel_ansiedad,
+                                testId = selectedTest.test_id
+                            )
+                            viewModel.saveSelectedTestData(testData)
+                            navController.navigate(AppScreen.EspecialistaFiltro.route)
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
