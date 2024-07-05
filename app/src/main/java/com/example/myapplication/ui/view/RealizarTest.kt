@@ -47,7 +47,13 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import com.example.myapplication.R
 import com.example.myapplication.data.UserSession
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,12 +69,15 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
     var showScoreDialog by remember { mutableStateOf(false) }
     val nivel = viewModel.nivel
     val nombre = UserSession.nombre ?: "User"
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = if (selectedTest != null) "Preguntas del Test" else "Realizar Test",
+                        text = if (selectedTest != null) stringResource(R.string.preguntas_del_test) else stringResource(
+                            R.string.realizar_test
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = Color.White,
@@ -106,36 +115,41 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     itemsIndexed(test.preguntas ?: emptyList()) { index, pregunta ->
-                        Column(
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
+                                .shadow(4.dp, shape = RoundedCornerShape(12.dp))
+                                .border(1.dp, Color(0xFF8BA4E7), shape = RoundedCornerShape(12.dp))
+                                .padding(16.dp)
                         ) {
-                            Text(
-                                text = "${index + 1}. ${pregunta.contenido}",
-                                fontSize = 18.sp,
-                                color = Color.Black,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                            test.opciones.filter { it.tipotest_id == pregunta.tipotest_id }.forEach { opcion ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 16.dp, top = 4.dp, bottom = 4.dp)
-                                ) {
-                                    RadioButton(
-                                        selected = selectedOptions[pregunta.preguntaid] == opcion.opcionid,
-                                        onClick = {
-                                            selectedOptions[pregunta.preguntaid] = opcion.opcionid
-                                        }
-                                    )
-                                    Text(
-                                        text = opcion.contenido,
-                                        fontSize = 16.sp,
-                                        color = Color.Black,
-                                        modifier = Modifier.padding(start = 8.dp)
-                                    )
+                            Column {
+                                Text(
+                                    text = "${index + 1}. ${pregunta.contenido}",
+                                    fontSize = 18.sp,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                test.opciones.filter { it.tipotest_id == pregunta.tipotest_id }.forEach { opcion ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp)
+                                    ) {
+                                        RadioButton(
+                                            selected = selectedOptions[pregunta.preguntaid] == opcion.opcionid,
+                                            onClick = {
+                                                selectedOptions[pregunta.preguntaid] = opcion.opcionid
+                                            }
+                                        )
+                                        Text(
+                                            text = opcion.contenido,
+                                            fontSize = 16.sp,
+                                            color = Color.Black,
+                                            modifier = Modifier.padding(start = 8.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -166,7 +180,7 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E8FE), contentColor = Color.Black)
                         ) {
                             Text(
-                                text = "Enviar Respuestas",
+                                text = stringResource(R.string.enviar_respuestas),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
                                 color = Color.Black
@@ -174,7 +188,7 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
                         }
                         if (showError) {
                             Text(
-                                text = "Por favor, responde todas las preguntas antes de enviar.",
+                                text = stringResource(R.string.por_favor_responde_todas_las_preguntas_antes_de_enviar),
                                 color = Color.Red,
                                 modifier = Modifier.padding(top = 8.dp)
                             )
@@ -192,7 +206,11 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
                                 .shadow(4.dp, shape = RoundedCornerShape(12.dp))
-                                .border(width = 3.dp, color = Color(0xFF8BA4E7), shape = RoundedCornerShape(12.dp)),
+                                .border(
+                                    width = 3.dp,
+                                    color = Color(0xFF8BA4E7),
+                                    shape = RoundedCornerShape(12.dp)
+                                ),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E8FE), contentColor = Color.Black)
                         ) {
@@ -235,13 +253,24 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
     if (showScoreDialog) {
         AlertDialog(
             onDismissRequest = { showScoreDialog = false },
-            title = { Text(text = "Nivel de Ansiedad") },
-            text = { Text(text = "$nombre tu ansiedad es $nivel") },
+            title = { Text(text = stringResource(R.string.nivel_de_ansiedad)) },
+            text = {
+                // Crear un AnnotatedString para aplicar estilos
+                val annotatedString = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = Color.Black)) {
+                        append(stringResource(R.string.tu_ansiedad_e, nombre))
+                    }
+                    withStyle(style = SpanStyle(color = Color.Red, fontSize = 20.sp)) {
+                        append(nivel)
+                    }
+                }
+                Text(text = annotatedString)
+            },
             confirmButton = {
                 Button(
                     onClick = { showScoreDialog = false }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             }
         )
