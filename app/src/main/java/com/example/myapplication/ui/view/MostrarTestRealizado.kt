@@ -49,24 +49,7 @@ import com.example.myapplication.data.model.TestsRealizadosResponse
 import com.example.myapplication.ui.viewmodel.TestRealizadosViewModel
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.OutlinedTextField
-
-
-
-import android.app.DatePickerDialog
-
-import androidx.compose.foundation.layout.*
-
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
-import java.util.Calendar
-import java.util.*
-import java.text.SimpleDateFormat
-import java.util.*
-
-import android.widget.DatePicker
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.ui.text.TextStyle
+import com.example.myapplication.navigation.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,8 +67,6 @@ fun MostrarTestRealizado(navController: NavController) {
     var filterName by remember { mutableStateOf("") }
     var filterLevel by remember { mutableStateOf("") }
     var filterType by remember { mutableStateOf("") }
-    var filterStartDate by remember { mutableStateOf("") }
-    var filterEndDate by remember { mutableStateOf("") }
 
     // Estado para la fila seleccionada
     var selectedRow by remember { mutableStateOf<Int?>(null) }
@@ -94,9 +75,7 @@ fun MostrarTestRealizado(navController: NavController) {
     val filteredTests = testsYRespuestas?.filter { test ->
         (filterName.isEmpty() || test.nombre_usuario.contains(filterName, ignoreCase = true)) &&
                 (filterLevel.isEmpty() || test.nivel_ansiedad.equals(filterLevel, ignoreCase = true)) &&
-                (filterType.isEmpty() || test.nombre_test.equals(filterType, ignoreCase = true)) &&
-                (filterStartDate.isEmpty() || parseDate(test.fecha_test)?.after(parseDate(filterStartDate)) == true) &&
-                (filterEndDate.isEmpty() || parseDate(test.fecha_test)?.before(parseDate(filterEndDate)) == true)
+                (filterType.isEmpty() || test.nombre_test.equals(filterType, ignoreCase = true))
     } ?: emptyList()
 
     Scaffold(
@@ -114,7 +93,10 @@ fun MostrarTestRealizado(navController: NavController) {
         bottomBar = {
             if (selectedRow != null) {
                 Button(
-                    onClick = { /* Acción para evaluar la fila seleccionada */ },
+                    onClick = {
+
+                        navController.navigate(AppScreen.EspecialistaFiltro.route)
+                              },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -147,45 +129,23 @@ fun MostrarTestRealizado(navController: NavController) {
             ) {
                 // Filtro de nivel
                 Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
-                    DropdownMenuField(
-                        label = "Nivel",
-                        options = listOf("leve", "moderada", "grave"),
+                    Text("Nivel:")
+                    FilterDropdown(
                         selectedOption = filterLevel,
-                        onOptionSelected = { filterLevel = it }
+                        onOptionSelected = { filterLevel = it },
+                        options = listOf("", "leve", "moderada", "grave")
                     )
                 }
 
                 // Filtro de tipo de test
                 Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
-                    DropdownMenuField(
-                        label = "Tipo de Test",
-                        options = listOf("Test de Beck", "Test HAM-A", "Test GAD-7"),
+                    Text("Tipo de Test:")
+                    FilterDropdown(
                         selectedOption = filterType,
-                        onOptionSelected = { filterType = it }
+                        onOptionSelected = { filterType = it },
+                        options = listOf("", "Test de Beck", "Test HAM-A", "Test GAD-7")
                     )
                 }
-            }
-
-
-            // Filtros de fecha en una sola fila
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                DatePickerField(
-                    label = "Fecha Inicio",
-                    selectedDate = filterStartDate,
-                    onDateSelected = { filterStartDate = it },
-                    onClearDate = { filterStartDate = "" },
-                    modifier = Modifier.weight(1f).padding(end = 4.dp)
-                )
-                DatePickerField(
-                    label = "Fecha Fin",
-                    selectedDate = filterEndDate,
-                    onDateSelected = { filterEndDate = it },
-                    onClearDate = { filterEndDate = "" },
-                    modifier = Modifier.weight(1f).padding(start = 4.dp)
-                )
             }
 
             LazyColumn(
@@ -250,109 +210,47 @@ fun MostrarTestRealizado(navController: NavController) {
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownMenuField(
-    label: String,
-    options: List<String>,
+fun FilterDropdown(
     selectedOption: String,
-    onOptionSelected: (String) -> Unit
+    onOptionSelected: (String) -> Unit,
+    options: List<String>
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val displayOptions = listOf("Todos los datos") + options
 
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = { expanded = !expanded })
+                .background(Color.LightGray)
+                .padding(8.dp)
+        ) {
             Text(
-                text = label,
-                style = TextStyle(fontSize = 18.sp, color = Color(0xFF0288D1))
+                text = if (selectedOption.isEmpty()) "Seleccionar" else selectedOption,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Box(
-                modifier = Modifier
-                    .background(Color.White, shape = RoundedCornerShape(8.dp))
-                    .fillMaxWidth()
-                    .clickable { expanded = true }
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = if (selectedOption.isEmpty()) "Seleccione una opción" else selectedOption,
-                    style = TextStyle(fontSize = 14.sp, color = Color.Black)
-                )
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                displayOptions.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(text = option) },
-                        onClick = {
-                            onOptionSelected(option.takeIf { it != "Todos los datos" } ?: "")
-                            expanded = false
-                        }
-                    )
-
-
-                }
-            }
         }
-    }
-}
 
-@Composable
-fun DatePickerField(
-    label: String,
-    selectedDate: String,
-    onDateSelected: (String) -> Unit,
-    onClearDate: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, selectedYear, selectedMonth, selectedDay ->
-            val date = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
-            onDateSelected(date)
-        },
-        year, month, day
-    )
-
-    Box(modifier = modifier) {
-        Column {
-            Text(
-                text = label,
-                style = TextStyle(fontSize = 14.sp, color = Color(0xFF0288D1))
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Row(
-                modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { datePickerDialog.show() }
-                ) {
-                    Text(
-                        text = selectedDate.ifEmpty { "Seleccione una fecha" },
-                        style = TextStyle(fontSize = 14.sp, color = Color.Black)
-                    )
-                }
-                if (selectedDate.isNotEmpty()) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(onClick = onClearDate) {
-                        Icon(Icons.Default.Clear, contentDescription = "Clear Date")
+        if (expanded) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                options.forEach { option ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onOptionSelected(option)
+                                expanded = false
+                            }
+                            .background(Color.White)
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = option.ifEmpty { "Todos" },
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
@@ -360,11 +258,9 @@ fun DatePickerField(
     }
 }
 
-private fun parseDate(date: String): Date? {
-    val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    return try {
-        format.parse(date)
-    } catch (e: Exception) {
-        null
-    }
+@Preview
+@Composable
+fun MostrarTestRealizadoPreview() {
+    MostrarTestRealizado(rememberNavController())
 }
+

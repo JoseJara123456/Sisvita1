@@ -50,162 +50,79 @@ import com.example.myapplication.data.model.TestsYPreguntasResponse
 import com.example.myapplication.navigation.AppScreen
 import com.example.myapplication.ui.viewmodel.TestRealizadosViewModel
 import com.example.myapplication.ui.viewmodel.TestViewModel
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+//import com.example.yourapp.ui.theme.YourAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun  EspecialistaFiltro(navController: NavHostController) {
-    val viewModel: TestRealizadosViewModel = viewModel()
+    var anxietyLevel by remember { mutableStateOf(TextFieldValue("")) }
+    var date by remember { mutableStateOf(TextFieldValue("")) }
+    var observations by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Estado para los filtros
-    var fechaTest by remember { mutableStateOf("") }
-    var tipoTest by remember { mutableStateOf("") }
-    var puntaje by remember { mutableStateOf("") }
-
-    // Obtenemos los tests realizados al iniciar la composición
-    viewModel.obtenerTestsRealizados()
-
-    // Observamos los datos del ViewModel
-    val testsYRespuestas = viewModel.testsYRespuestas
-    val errorMessage = viewModel.errorMessage
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Tests Realizados") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .padding(15.dp)
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .padding(15.dp),
+            //horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Campos de entrada para los filtros
+            Text(text = "Especialista:", fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(18.dp))
+            Text(text = "Estudiante:", fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(18.dp))
+            Text(text = "Fecha", fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(18.dp))
+            Text(text = "Tipo de Test", fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(20.dp))
             TextField(
-                value = fechaTest,
-                onValueChange = { fechaTest = it },
-                label = { Text("Fecha del Test (YYYY-MM-DD)") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-            )
-            TextField(
-                value = tipoTest,
-                onValueChange = { tipoTest = it },
-                label = { Text("Tipo de Test") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-            )
-            TextField(
-                value = puntaje,
-                onValueChange = { puntaje = it },
-                label = { Text("Puntaje Mínimo") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-            Button(
-                onClick = {
-                    // Llama a una función en el ViewModel para filtrar los tests
-                    viewModel.filtrarTests(fechaTest, tipoTest, puntaje)
-                },
+                value = anxietyLevel,
+                onValueChange = { anxietyLevel = it },
                 modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = "Nivel de Ansiedad", fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(30.dp))
+            TextField(
+                value = date,
+                onValueChange = { date = it },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = "Observaciones:", fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(20.dp))
+            TextField(
+                value = observations,
+                onValueChange = { observations = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+            )
+            Spacer(modifier = Modifier.height(70.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Text("Filtrar")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (testsYRespuestas != null && testsYRespuestas.isNotEmpty()) {
-                // Encabezados de la tabla
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = "Test",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(2f)
-                    )
-                    Text(
-                        text = "Usuario",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "Fecha del Test",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "Puntaje",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
+                Button(onClick = { /* TODO: Handle Notificar Solicitar Cita */ }) {
+                    Text(text = "Notificar ")
                 }
-                // Filas de la tabla
-                testsYRespuestas.forEach { test ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = test.nombre_test,
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(2f)
-                        )
-                        Text(
-                            text = test.nombre_usuario,
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = test.fecha_test,
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = test.puntaje.toString(),
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                Button(onClick = { /* TODO: Handle Observado */ }) {
+                    Text(text = "Listo")
                 }
-            } else {
-                Text(
-                    text = "No hay tests realizados.",
-                    color = Color.Gray,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                )
-            }
-
-            if (errorMessage.isNotEmpty()) {
-                Text(
-                    text = errorMessage,
-                    color = Color.Red,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
             }
         }
     }
