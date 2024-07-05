@@ -119,7 +119,7 @@ fun MostrarTestRealizado(navController: NavController) {
         bottomBar = {
             if (selectedRow != null) {
                 Button(
-                    onClick = { /* Acción para evaluar la fila seleccionada */ },
+                    onClick = { navController.navigate(AppScreen.EspecialistaFiltro.route) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
