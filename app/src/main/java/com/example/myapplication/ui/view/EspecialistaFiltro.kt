@@ -1,20 +1,14 @@
 package com.example.myapplication.ui.view
 
 import android.util.Log
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,18 +52,23 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.data.SelectedTestData
 import com.example.myapplication.data.UserSession
+import com.example.myapplication.ui.viewmodel.DiagnosticoViewModel
+import com.example.myapplication.ui.viewmodel.TestViewModel
 
 @Composable
 fun EspecialistaFiltro(navController: NavHostController) {
+    val viewModel: DiagnosticoViewModel = viewModel()
     var filterLevel by remember { mutableStateOf("") }
     var filterTreatment by remember { mutableStateOf("") }
     var fundamentacionCientifica by remember { mutableStateOf("") }
     var observaciones by remember { mutableStateOf("") }
 
     val nombre = UserSession.nombre ?: "User"
+    val idUsuario = UserSession.idUsuario ?: "User"
     val nombreUsuario = SelectedTestData.nombreUsuario ?: "Jose"
     val nombreTest = SelectedTestData.nombreTest ?: "Beck"
     val nivelAnsiedad = SelectedTestData.nivelAnsiedad ?: "leve"
+    val testId = SelectedTestData.testId ?: "2"
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -102,12 +101,12 @@ fun EspecialistaFiltro(navController: NavHostController) {
                     "Ejercicio Regular",
                     "Meditación/Relajación"
                 )
-                "HAM-A" -> listOf(
+                "Test HAM-A" -> listOf(
                     "Terapia Cognitivo-Conductual",
                     "Medicamentos Ansiolíticos",
                     "Técnicas de Respiración"
                 )
-                "GAD-7" -> listOf(
+                "Test GAD-7" -> listOf(
                     "Terapia Cognitivo-Conductual (TCC)",
                     "Meditación y atención plena",
                     "Actividad Física"
@@ -139,11 +138,28 @@ fun EspecialistaFiltro(navController: NavHostController) {
             )
 
             Button(
-                onClick = { /* TODO: Handle enviar diagnóstico */ },
+                onClick = {
+                    val datosParaEnviar = mapOf(
+                        "idUsuario" to idUsuario,
+                        "testId" to testId,
+                        "tratamiento" to filterTreatment,
+                        "diagnosticoNivelAnsiedad" to filterLevel,
+                        "fundamentacionCientifica" to fundamentacionCientifica,
+                        "observaciones" to observaciones
+                    )
+
+                    // Log para verificar los datos antes de enviar
+                    Log.d("EspecialistaFiltro", "Datos a enviar al backend: $datosParaEnviar")
+
+                    // Aquí debes hacer la llamada al ViewModel para enviar datos
+                    viewModel.enviarDatosDiagnostico(idUsuario.toInt(), testId, filterTreatment, filterLevel, fundamentacionCientifica, observaciones)
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Enviar Diagnóstico")
             }
+
+
         }
     }
 }
