@@ -44,6 +44,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.data.SelectedTestData
 import com.example.myapplication.data.UserSession
+import com.example.myapplication.navigation.AppScreen
 import com.example.myapplication.ui.viewmodel.DiagnosticoViewModel
 import com.example.myapplication.ui.viewmodel.TestViewModel
 
@@ -72,97 +74,108 @@ fun EspecialistaFiltro(navController: NavHostController) {
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp)
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .padding(15.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp)
-        ) {
-            Text(text = "Especialista: $nombre ", fontSize = 18.sp)
-            Text(text = "Estudiante: $nombreUsuario", fontSize = 18.sp)
-            Text(text = "Tipo de Test: $nombreTest", fontSize = 18.sp)
-            Text(text = "Nivel de Ansiedad: $nivelAnsiedad", fontSize = 18.sp)
-
-            DropdownMenuField(
-                label = "Diagnóstico de Nivel de Ansiedad",
-                options = listOf("Leve", "Moderado", "Grave"),
-                selectedOption = filterLevel,
-                onOptionSelected = { filterLevel = it }
-            )
-
-            // Mostrar tratamientos según el tipo de test seleccionado
-            val tratamientos = when (nombreTest) {
-                "Test de Beck" -> listOf(
-                    "Terapia Cognitivo-Conductual",
-                    "Ejercicio Regular",
-                    "Meditación/Relajación"
-                )
-                "Test HAM-A" -> listOf(
-                    "Terapia Cognitivo-Conductual",
-                    "Medicamentos Ansiolíticos",
-                    "Técnicas de Respiración"
-                )
-                "Test GAD-7" -> listOf(
-                    "Terapia Cognitivo-Conductual (TCC)",
-                    "Meditación y atención plena",
-                    "Actividad Física"
-                )
-                else -> emptyList()
-            }
-
-            DropdownMenuField(
-                label = "Tratamiento",
-                options = tratamientos,
-                selectedOption = filterTreatment,
-                onOptionSelected = { filterTreatment = it }
-            )
-
-            // Cuadro de texto para fundamentación científica
-            TextField(
-                value = fundamentacionCientifica,
-                onValueChange = { fundamentacionCientifica = it },
-                label = { Text("Fundamentación Científica") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // Cuadro de texto para observaciones
-            TextField(
-                value = observaciones,
-                onValueChange = { observaciones = it },
-                label = { Text("Observaciones") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Button(
-                onClick = {
-                    val datosParaEnviar = mapOf(
-                        "idUsuario" to idUsuario,
-                        "testId" to testId,
-                        "tratamiento" to filterTreatment,
-                        "diagnosticoNivelAnsiedad" to filterLevel,
-                        "fundamentacionCientifica" to fundamentacionCientifica,
-                        "observaciones" to observaciones
+        color = MaterialTheme.colorScheme.background,
+        contentColor = Color.Black, // Establecer el color de texto por defecto
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color(0xFF0D47A1), Color(0xFF512DA8))
+                        ),
+                        shape = RoundedCornerShape(8.dp)
                     )
-
-                    // Log para verificar los datos antes de enviar
-                    Log.d("EspecialistaFiltro", "Datos a enviar al backend: $datosParaEnviar")
-
-                    // Aquí debes hacer la llamada al ViewModel para enviar datos
-                    viewModel.enviarDatosDiagnostico(idUsuario.toInt(), testId, filterTreatment, filterLevel, fundamentacionCientifica, observaciones)
-                    navController.navigate(AppScreen.MostrarTestRealizado.route)
-                },
-                modifier = Modifier.fillMaxWidth()
+                    .padding(15.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                Text(text = "Enviar Diagnóstico")
+                Text(text = "Especialista: ", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = nombre, fontSize = 18.sp)
+                Text(text = "Estudiante: ", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = nombreUsuario, fontSize = 18.sp)
+                Text(text = "Tipo de Test: ", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = nombreTest, fontSize = 18.sp)
+                Text(text = "Nivel de Ansiedad: ", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = nivelAnsiedad, fontSize = 18.sp)
+
+                DropdownMenuField(
+                    label = "Diagnóstico de Nivel de Ansiedad",
+                    options = listOf("Leve", "Moderado", "Grave"),
+                    selectedOption = filterLevel,
+                    onOptionSelected = { filterLevel = it }
+                )
+
+                val tratamientos = when (nombreTest) {
+                    "Test de Beck" -> listOf(
+                        "Terapia Cognitivo-Conductual",
+                        "Ejercicio Regular",
+                        "Meditación/Relajación"
+                    )
+                    "Test HAM-A" -> listOf(
+                        "Terapia Cognitivo-Conductual",
+                        "Medicamentos Ansiolíticos",
+                        "Técnicas de Respiración"
+                    )
+                    "Test GAD-7" -> listOf(
+                        "Terapia Cognitivo-Conductual (TCC)",
+                        "Meditación y atención plena",
+                        "Actividad Física"
+                    )
+                    else -> emptyList()
+                }
+
+                DropdownMenuField(
+                    label = "Tratamiento",
+                    options = tratamientos,
+                    selectedOption = filterTreatment,
+                    onOptionSelected = { filterTreatment = it }
+                )
+
+                TextField(
+                    value = fundamentacionCientifica,
+                    onValueChange = { fundamentacionCientifica = it },
+                    label = { Text("Fundamentación Científica") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                TextField(
+                    value = observaciones,
+                    onValueChange = { observaciones = it },
+                    label = { Text("Observaciones") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Button(
+                    onClick = {
+                        val datosParaEnviar = mapOf(
+                            "idUsuario" to idUsuario,
+                            "testId" to testId,
+                            "tratamiento" to filterTreatment,
+                            "diagnosticoNivelAnsiedad" to filterLevel,
+                            "fundamentacionCientifica" to fundamentacionCientifica,
+                            "observaciones" to observaciones
+                        )
+
+                        Log.d("EspecialistaFiltro", "Datos a enviar al backend: $datosParaEnviar")
+
+                        viewModel.enviarDatosDiagnostico(
+                            idUsuario.toInt(),
+                            testId,
+                            filterTreatment,
+                            filterLevel,
+                            fundamentacionCientifica,
+                            observaciones
+                        )
+                        navController.navigate(AppScreen.MostrarTestRealizado.route)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Enviar Diagnóstico")
+                }
             }
-
-
         }
-    }
+    )
 }
 
 @Composable

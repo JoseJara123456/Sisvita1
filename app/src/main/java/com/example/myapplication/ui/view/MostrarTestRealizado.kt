@@ -66,6 +66,8 @@ import java.util.*
 
 import android.widget.DatePicker
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import com.example.myapplication.R
@@ -144,6 +146,11 @@ fun MostrarTestRealizado(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF0D47A1), Color(0xFF512DA8))
+                    )
+                )
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -261,10 +268,11 @@ fun MostrarTestRealizado(navController: NavController) {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
+                                .clip(RoundedCornerShape(16.dp))
                                 .background(color = semaforoColor),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(test.nivel_ansiedad, fontSize = 16.sp, textAlign = TextAlign.Center)
+                            Text(test.nivel_ansiedad, fontSize = 12.sp, textAlign = TextAlign.Center)
                         }
                     }
                 }
@@ -401,3 +409,10 @@ private fun parseDate(date: String): Date? {
     }
 }
 
+@Preview
+@Composable
+fun MostrarTestRealizado() {
+    val navController = rememberNavController()
+    MostrarTestRealizado(navController = navController)
+    //EspecialistaFiltro(rememberNavController())
+}
