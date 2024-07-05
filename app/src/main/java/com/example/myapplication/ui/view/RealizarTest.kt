@@ -47,7 +47,14 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import com.example.myapplication.R
 import com.example.myapplication.data.UserSession
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,6 +69,7 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
     var showScoreDialog by remember { mutableStateOf(false) }
     val nivel = viewModel.nivel
     val nombre = UserSession.nombre ?: "User"
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -107,36 +115,41 @@ fun RealizarTest(navController: NavController, usuarioId: Int) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     itemsIndexed(test.preguntas ?: emptyList()) { index, pregunta ->
-                        Column(
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
+                                .shadow(4.dp, shape = RoundedCornerShape(12.dp))
+                                .border(1.dp, Color(0xFF8BA4E7), shape = RoundedCornerShape(12.dp))
+                                .padding(16.dp)
                         ) {
-                            Text(
-                                text = "${index + 1}. ${pregunta.contenido}",
-                                fontSize = 18.sp,
-                                color = Color.Black,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                            test.opciones.filter { it.tipotest_id == pregunta.tipotest_id }.forEach { opcion ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 16.dp, top = 4.dp, bottom = 4.dp)
-                                ) {
-                                    RadioButton(
-                                        selected = selectedOptions[pregunta.preguntaid] == opcion.opcionid,
-                                        onClick = {
-                                            selectedOptions[pregunta.preguntaid] = opcion.opcionid
-                                        }
-                                    )
-                                    Text(
-                                        text = opcion.contenido,
-                                        fontSize = 16.sp,
-                                        color = Color.Black,
-                                        modifier = Modifier.padding(start = 8.dp)
-                                    )
+                            Column {
+                                Text(
+                                    text = "${index + 1}. ${pregunta.contenido}",
+                                    fontSize = 18.sp,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                test.opciones.filter { it.tipotest_id == pregunta.tipotest_id }.forEach { opcion ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp)
+                                    ) {
+                                        RadioButton(
+                                            selected = selectedOptions[pregunta.preguntaid] == opcion.opcionid,
+                                            onClick = {
+                                                selectedOptions[pregunta.preguntaid] = opcion.opcionid
+                                            }
+                                        )
+                                        Text(
+                                            text = opcion.contenido,
+                                            fontSize = 16.sp,
+                                            color = Color.Black,
+                                            modifier = Modifier.padding(start = 8.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
