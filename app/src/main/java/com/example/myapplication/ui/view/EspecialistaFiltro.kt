@@ -45,29 +45,31 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.data.model.RespuestaRequest
-import com.example.myapplication.data.model.TestsYPreguntasResponse
-import com.example.myapplication.navigation.AppScreen
-import com.example.myapplication.ui.viewmodel.TestRealizadosViewModel
-import com.example.myapplication.ui.viewmodel.TestViewModel
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import com.example.yourapp.ui.theme.YourAppTheme
+import com.example.myapplication.R
+import com.example.myapplication.data.SelectedTestData
+import com.example.myapplication.data.UserSession
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  EspecialistaFiltro(navController: NavHostController) {
-    var anxietyLevel by remember { mutableStateOf(TextFieldValue("")) }
-    var date by remember { mutableStateOf(TextFieldValue("")) }
-    var observations by remember { mutableStateOf(TextFieldValue("")) }
+fun EspecialistaFiltro(navController: NavHostController) {
+    var filterLevel by remember { mutableStateOf("") }
+    var filterTreatment by remember { mutableStateOf("") }
+    var fundamentacionCientifica by remember { mutableStateOf("") }
+    var observaciones by remember { mutableStateOf("") }
+
+    val nombre = UserSession.nombre ?: "User"
+    val nombreUsuario = SelectedTestData.nombreUsuario ?: "Jose"
+    val nombreTest = SelectedTestData.nombreTest ?: "Beck"
+    val nivelAnsiedad = SelectedTestData.nivelAnsiedad ?: "leve"
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -79,50 +81,117 @@ fun  EspecialistaFiltro(navController: NavHostController) {
                 .padding(15.dp)
                 .background(Color.White, shape = RoundedCornerShape(8.dp))
                 .padding(15.dp),
-            //horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Text(text = "Especialista:", fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(18.dp))
-            Text(text = "Estudiante:", fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(18.dp))
-            Text(text = "Fecha", fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(18.dp))
-            Text(text = "Tipo de Test", fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "Especialista: $nombre ", fontSize = 18.sp)
+            Text(text = "Estudiante: $nombreUsuario", fontSize = 18.sp)
+            Text(text = "Tipo de Test: $nombreTest", fontSize = 18.sp)
+            Text(text = "Nivel de Ansiedad: $nivelAnsiedad", fontSize = 18.sp)
+
+            DropdownMenuField(
+                label = "Diagnóstico de Nivel de Ansiedad",
+                options = listOf("Ninguno", "Leve", "Moderado", "Grave"),
+                selectedOption = filterLevel,
+                onOptionSelected = { filterLevel = it }
+            )
+
+            // Mostrar tratamientos según el tipo de test seleccionado
+            val tratamientos = when (nombreTest) {
+                "Test de Beck" -> listOf(
+                    "Ninguno",
+                    "Terapia Cognitivo-Conductual",
+                    "Ejercicio Regular",
+                    "Meditación/Relajación"
+                )
+                "HAM-A" -> listOf(
+                    "Ninguno",
+                    "Terapia Cognitivo-Conductual",
+                    "Medicamentos Ansiolíticos",
+                    "Técnicas de Respiración"
+                )
+                "GAD-7" -> listOf(
+                    "Ninguno",
+                    "Terapia Cognitivo-Conductual (TCC)",
+                    "Meditación y atención plena",
+                    "Actividad Física"
+                )
+                else -> emptyList()
+            }
+
+            DropdownMenuField(
+                label = "Tratamiento",
+                options = tratamientos,
+                selectedOption = filterTreatment,
+                onOptionSelected = { filterTreatment = it }
+            )
+
+            // Cuadro de texto para fundamentación científica
             TextField(
-                value = anxietyLevel,
-                onValueChange = { anxietyLevel = it },
+                value = fundamentacionCientifica,
+                onValueChange = { fundamentacionCientifica = it },
+                label = { Text("Fundamentación Científica") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(text = "Nivel de Ansiedad", fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(30.dp))
+
+            // Cuadro de texto para observaciones
             TextField(
-                value = date,
-                onValueChange = { date = it },
+                value = observaciones,
+                onValueChange = { observaciones = it },
+                label = { Text("Observaciones") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(text = "Observaciones:", fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(20.dp))
-            TextField(
-                value = observations,
-                onValueChange = { observations = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-            )
-            Spacer(modifier = Modifier.height(70.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
+
+            Button(
+                onClick = { /* TODO: Handle enviar diagnóstico */ },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Button(onClick = { /* TODO: Handle Notificar Solicitar Cita */ }) {
-                    Text(text = "Notificar ")
-                }
-                Button(onClick = { /* TODO: Handle Observado */ }) {
-                    Text(text = "Listo")
-                }
+                Text(text = "Enviar Diagnóstico")
+            }
+        }
+    }
+}
+
+@Composable
+fun DropdownMenuField(
+    label: String,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = TextStyle(fontSize = 18.sp, color = Color(0xFF0288D1))
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .fillMaxWidth()
+                .clickable { expanded = true }
+                .padding(8.dp)
+        ) {
+            Text(
+                text = if (selectedOption.isEmpty()) "Seleccione una opción" else selectedOption,
+                style = TextStyle(fontSize = 14.sp, color = Color.Black)
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(text = option) },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
+                )
             }
         }
     }
