@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -51,13 +52,24 @@ fun HeatmapScreen(navController: NavHostController? = null) {
     viewModel.getDataHeatMap()
     val heatMapData = viewModel.heatMapData
 
-    var filterLevel by remember { mutableStateOf("") }
     var filterType by remember { mutableStateOf("") }
 
+    // Obtener los nombres de los tipos de tests para el filtro
+    val testNames = heatMapData?.map { it.test_nombre }?.distinct() ?: listOf()
+
+    // Aplicar el filtro para tipo de test
     val filteredHeatMap = heatMapData?.filter { heatmap ->
-        (filterLevel.isEmpty() || heatmap.nivel_ansiedad.toString() == filterLevel) &&
-                (filterType.isEmpty() || getTestType(heatmap.test_id) == filterType)
+        filterType.isEmpty() || heatmap.test_nombre == filterType
     } ?: emptyList()
+
+    // Calcular el promedio de los niveles de ansiedad para cada ubicación
+    val averagedHeatMapData = filteredHeatMap.groupBy { LatLng(it.latitud, it.longitud) }
+        .mapValues { entry ->
+            entry.value.map { it.nivel_ansiedad }.average()
+        }
+        .map { (latLng, avgNivel) ->
+            WeightedLatLng(latLng, avgNivel)
+        }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -85,11 +97,14 @@ fun HeatmapScreen(navController: NavHostController? = null) {
                 title = { Text("Mapa de calor") },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController?.popBackStack()
+                        if (navController != null) {
+                            navController.popBackStack()
+                        }
                     }) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors()
             )
         }
     ) { paddingValues ->
@@ -101,28 +116,17 @@ fun HeatmapScreen(navController: NavHostController? = null) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Filtros
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                // Filtro de nivel
                 Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
-                    Text("Nivel:")
-                    FilterDropdown(
-                        selectedOption = filterLevel,
-                        onOptionSelected = { filterLevel = it },
-                        options = listOf("", "1", "2", "3")
-                    )
-                }
-                // Filtro de tipo de test
-                Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
-                    Text("Tipo de Test:")
-                    FilterDropdown(
+                    DropdownMenuField(
+                        label = "Tipo de Test",
+                        options = testNames,
                         selectedOption = filterType,
-                        onOptionSelected = { filterType = it },
-                        options = listOf("", "Test de Beck", "Test HAM-A", "Test GAD-7")
+                        onOptionSelected = { filterType = it }
                     )
                 }
             }
@@ -135,19 +139,18 @@ fun HeatmapScreen(navController: NavHostController? = null) {
                         googleMap.uiSettings.isZoomControlsEnabled = true
                         googleMap.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
-                                LatLng(-12.046374, -77.042793), 10f
+                                LatLng(
+                                    -12.046374,
+                                    -77.042793
+                                ), 10f
                             )
                         )
-                        if (filteredHeatMap.isNotEmpty()) {
-                            val weightedLatLngs = filteredHeatMap.map { heatmap ->
-                                WeightedLatLng(
-                                    LatLng(heatmap.latitud, heatmap.longitud),
-                                    heatmap.nivel_ansiedad.toDouble()
-                                )
-                            }
 
+                        googleMap.clear()
+
+                        if (averagedHeatMapData.isNotEmpty()) {
                             val provider = HeatmapTileProvider.Builder()
-                                .weightedData(weightedLatLngs)
+                                .weightedData(averagedHeatMapData)
                                 .radius(50)
                                 .opacity(1.0)
                                 .build()
@@ -162,25 +165,3 @@ fun HeatmapScreen(navController: NavHostController? = null) {
         }
     }
 }
-
-fun getTestType(testId: Int): String {
-    return when (testId) {
-        1 -> "Test de Beck"
-        2 -> "Test HAM-A"
-        3 -> "Test GAD-7"
-        else -> ""
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
