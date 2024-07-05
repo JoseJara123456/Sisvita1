@@ -153,6 +153,7 @@ fun EspecialistaFiltro(navController: NavHostController) {
 
                     // Aquí debes hacer la llamada al ViewModel para enviar datos
                     viewModel.enviarDatosDiagnostico(idUsuario.toInt(), testId, filterTreatment, filterLevel, fundamentacionCientifica, observaciones)
+                    navController.navigate(AppScreen.MostrarTestRealizado.route)
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
