@@ -1,22 +1,25 @@
-from flask import Blueprint,render_template, flash, session
-from flask_mail import Mail, Message
+from flask import Blueprint, flash, session, jsonify
+from flask_mail import Message
 from utils.mail import mail_instance
-from flask import render_template
-from flask import Blueprint
 
+gmail_bp = Blueprint('gmail', __name__)
 
-gmail_bp = Blueprint('usuarios', __name__)
-    
 @gmail_bp.route('/enviarCorreo', methods=['POST'])
+def enviar_correo():
+    correo_usuario = 'xjoseduran01@gmail.com'
+    if not correo_usuario:
+        return jsonify({"error": "correo_usuario is not set in session"}), 400
 
-def enviar_correo(diagnostico_id):
-    
-    
-    correo_usuario = session.get('correo_usuario')
-    msg = Message('Su diagnostico se ha realizado', sender='Sisvita@gmail.com', recipients=[correo_usuario])
-    msg.html = render_template('email.html')
+    msg = Message(
+        'Mensaje de Prueba',
+        sender='sisvita.fisi@gmail.com',  # Remitente del correo
+        recipients=[correo_usuario]       # Destinatarios del correo
+    )
+    msg.body = 'Este es un mensaje de prueba.'  # Cuerpo del mensaje
 
-    mail_instance.send(msg) 
-    flash("Diagnosticado correctamente")
-    
-    return 
+    try:
+        mail_instance.send(msg)
+        flash("Correo enviado correctamente")
+        return jsonify({"message": "Correo enviado correctamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
