@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="tests_realizados">Tests Realizados</string>
+    <string name="nombre_de_alumno">Nombre de Alumno</string>
+    <string name="nivel">Nivel</string>
+    <string name="tipo_de_test">Tipo de Test</string>
+    <string name="fecha_inicio">Fecha Inicio</string>
+    <string name="fecha_fin">Fecha Fin</string>
+    <string name="seleccione_una_opci_n">Seleccione una opción</string>
+    <string name="seleccione_una_fecha">Seleccione una fecha</string>
+    <string name="evaluar">Evaluar</string>
+    <string name="back">Back</string>
+    <string name="leve">leve</string>
+    <string name="moderada">moderada</string>
+    <string name="grave">grave</string>
+    <string name="test_de_beck">Test de Beck</string>
+    <string name="test_ham_a">Test HAM-A</string>
+    <string name="test_gad_7">Test GAD-7</string>
+    <string name="test">Test</string>
+    <string name="usuario">Usuario</string>
+    <string name="fecha_del_test">Fecha del Test</string>
+    <string name="puntaje">Puntaje</string>
+    <string name="todos_los_datos">Todos los datos</string>
 </resources>
