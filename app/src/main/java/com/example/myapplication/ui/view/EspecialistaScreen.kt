@@ -3,11 +3,18 @@ package com.example.myapplication.ui.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -25,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.R
 import com.example.myapplication.data.UserSession
 import com.example.myapplication.navigation.AppScreen
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +78,7 @@ fun EspecialistaScreen(navController: NavController) {
                         onDismissRequest = { setExpanded(false) }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Logout") },
+                            text = { Text("Cerrar sesión") },
                             onClick = {
                                 navController.navigate(AppScreen.HomeScreen.route)
                                 setExpanded(false)
@@ -79,48 +90,51 @@ fun EspecialistaScreen(navController: NavController) {
             )
         }
     ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(painter = painterResource(id = R.drawable.vigilancia_image), contentDescription = "Vigilancia", modifier = Modifier.size(200.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = {
+                    navController.navigate(AppScreen.MostrarTestRealizado.route)
+                },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007BFF))
             ) {
-                Text(
-                    text = "Welcome",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                Button(
-                    onClick = {
-                        // Aquí puedes agregar la lógica para salir de la sesión o navegar a otra pantalla
-                        //navController.navigate(AppScreen.EspecialistaFiltro.route)
-                        navController.navigate(AppScreen.MostrarTestRealizado.route)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(Color(0xFF085394))
-                ) {
-                    Text("Realizar Vigilancia")
-                }
-                Button(
-                    onClick = {
-                        // Aquí puedes agregar la lógica para salir de la sesión o navegar a otra pantalla
-                        navController.navigate(AppScreen.HeatmapScreen.route)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(Color(0xFF085394))
-                ) {
-                    Text("Ver mapa de calor")
-                }
+                Text("Realizar Vigilancia")
+            }
+
+            Image(painter = painterResource(id = R.drawable.mapa_calor_image), contentDescription = "Mapa de Calor", modifier = Modifier.size(200.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = {
+                    navController.navigate(AppScreen.HeatmapScreen.route)
+                },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007BFF))
+            ) {
+                Text("Ver mapa de calor")
             }
         }
     }
+}
+
+
+
+
+
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun EspecialistaScreenPreview() {
-    // Proporciona un NavController falso y un ViewModel falso para la previsualización
     val navController = rememberNavController()
     EspecialistaScreen(navController = navController)
 }
