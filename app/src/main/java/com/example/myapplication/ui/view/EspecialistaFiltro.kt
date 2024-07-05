@@ -90,7 +90,7 @@ fun EspecialistaFiltro(navController: NavHostController) {
 
             DropdownMenuField(
                 label = "Diagnóstico de Nivel de Ansiedad",
-                options = listOf("Ninguno", "Leve", "Moderado", "Grave"),
+                options = listOf("Leve", "Moderado", "Grave"),
                 selectedOption = filterLevel,
                 onOptionSelected = { filterLevel = it }
             )
@@ -98,19 +98,16 @@ fun EspecialistaFiltro(navController: NavHostController) {
             // Mostrar tratamientos según el tipo de test seleccionado
             val tratamientos = when (nombreTest) {
                 "Test de Beck" -> listOf(
-                    "Ninguno",
                     "Terapia Cognitivo-Conductual",
                     "Ejercicio Regular",
                     "Meditación/Relajación"
                 )
                 "HAM-A" -> listOf(
-                    "Ninguno",
                     "Terapia Cognitivo-Conductual",
                     "Medicamentos Ansiolíticos",
                     "Técnicas de Respiración"
                 )
                 "GAD-7" -> listOf(
-                    "Ninguno",
                     "Terapia Cognitivo-Conductual (TCC)",
                     "Meditación y atención plena",
                     "Actividad Física"
