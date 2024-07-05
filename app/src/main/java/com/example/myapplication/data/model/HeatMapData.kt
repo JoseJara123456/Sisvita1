@@ -6,6 +6,7 @@ data class HeatMapResponse(
 ){
     data class HeatMapData(
         val test_id: Int,
+        val test_nombre:String,
         val usuarioid: Int,
         val nivel_ansiedad: Int,
         val ubigeoid: Int,
