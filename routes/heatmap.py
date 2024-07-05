@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from models.estudiante import Estudiante
 from models.test_realizado import testRealizados
+from models.tests import Tests
 from models.ubigeo import Ubigeo
 from utils.db import db
 
@@ -19,13 +20,15 @@ def get_heatmap_data():
     try:
         query = db.session.query(
             testRealizados.test_id,
+            Tests.nombre,
             Estudiante.usuarioid,
             testRealizados.nivel_ansiedad,
             Ubigeo.ubigeoid,
             Ubigeo.latitud,
             Ubigeo.longitud
         ).join(testRealizados, Estudiante.usuarioid == testRealizados.usuarioid)\
-         .join(Ubigeo, Estudiante.ubigeoid == Ubigeo.ubigeoid) 
+         .join(Ubigeo, Estudiante.ubigeoid == Ubigeo.ubigeoid)\
+         .join(Tests, testRealizados.tipotest_id==Tests.tipotest_id)
 
         resultados = query.all()
 
@@ -33,6 +36,7 @@ def get_heatmap_data():
         for resultado in resultados:
             resultado_dict = {
                 "test_id": resultado.test_id,
+                "test_nombre": resultado.nombre ,
                 "usuarioid": resultado.usuarioid,
                 "nivel_ansiedad": map_nivel_ansiedad(resultado.nivel_ansiedad),
                 "ubigeoid": resultado.ubigeoid,
