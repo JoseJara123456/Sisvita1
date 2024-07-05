@@ -27,12 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.myapplication.R
 import com.example.myapplication.ui.viewmodel.HeatMapViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
@@ -94,7 +96,7 @@ fun HeatmapScreen(navController: NavHostController? = null) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mapa de calor") },
+                title = { Text(stringResource(R.string.Mapa_calor)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (navController != null) {
@@ -123,7 +125,7 @@ fun HeatmapScreen(navController: NavHostController? = null) {
             ) {
                 Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
                     DropdownMenuField(
-                        label = "Tipo de Test",
+                        label = stringResource(R.string.tipo_de_test),
                         options = testNames,
                         selectedOption = filterType,
                         onOptionSelected = { filterType = it }
