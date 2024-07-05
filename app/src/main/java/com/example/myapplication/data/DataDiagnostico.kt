@@ -1,6 +1,8 @@
 package com.example.myapplication.data
 
-iimport com.example.myapplication.data.model.TestData
+import com.example.myapplication.data.model.TestData
+
+
 
 object SelectedTestData {
     var nombreTest: String? = null
