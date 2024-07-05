@@ -66,7 +66,9 @@ import java.util.*
 
 import android.widget.DatePicker
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import com.example.myapplication.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,10 +104,13 @@ fun MostrarTestRealizado(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tests Realizados") },
+                title = { Text(stringResource(R.string.tests_realizados)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(
+                            R.string.back
+                        )
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors()
@@ -119,7 +124,7 @@ fun MostrarTestRealizado(navController: NavController) {
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text("Evaluar")
+                    Text(stringResource(R.string.evaluar))
                 }
             }
         }
@@ -133,11 +138,13 @@ fun MostrarTestRealizado(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Filtros debajo uno del otro
-            Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)) {
                 OutlinedTextField(
                     value = filterName,
                     onValueChange = { filterName = it },
-                    label = { Text("Nombre de Alumno") }
+                    label = { Text(stringResource(R.string.nombre_de_alumno)) }
                 )
             }
             Row(
@@ -146,20 +153,28 @@ fun MostrarTestRealizado(navController: NavController) {
                 verticalAlignment = Alignment.Top
             ) {
                 // Filtro de nivel
-                Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
+                Column(modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp)) {
                     DropdownMenuField(
-                        label = "Nivel",
-                        options = listOf("leve", "moderada", "grave"),
+                        label = stringResource(R.string.nivel),
+                        options = listOf(stringResource(R.string.leve),
+                            stringResource(R.string.moderada), stringResource(R.string.grave)
+                        ),
                         selectedOption = filterLevel,
                         onOptionSelected = { filterLevel = it }
                     )
                 }
 
                 // Filtro de tipo de test
-                Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
+                Column(modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp)) {
                     DropdownMenuField(
-                        label = "Tipo de Test",
-                        options = listOf("Test de Beck", "Test HAM-A", "Test GAD-7"),
+                        label = stringResource(R.string.tipo_de_test),
+                        options = listOf(stringResource(R.string.test_de_beck),
+                            stringResource(R.string.test_ham_a), stringResource(R.string.test_gad_7)
+                        ),
                         selectedOption = filterType,
                         onOptionSelected = { filterType = it }
                     )
@@ -169,22 +184,28 @@ fun MostrarTestRealizado(navController: NavController) {
 
             // Filtros de fecha en una sola fila
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DatePickerField(
-                    label = "Fecha Inicio",
+                    label = stringResource(R.string.fecha_inicio),
                     selectedDate = filterStartDate,
                     onDateSelected = { filterStartDate = it },
                     onClearDate = { filterStartDate = "" },
-                    modifier = Modifier.weight(1f).padding(end = 4.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp)
                 )
                 DatePickerField(
-                    label = "Fecha Fin",
+                    label = stringResource(R.string.fecha_fin),
                     selectedDate = filterEndDate,
                     onDateSelected = { filterEndDate = it },
                     onClearDate = { filterEndDate = "" },
-                    modifier = Modifier.weight(1f).padding(start = 4.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 4.dp)
                 )
             }
 
@@ -200,19 +221,19 @@ fun MostrarTestRealizado(navController: NavController) {
                             .fillMaxWidth()
                             .padding(8.dp)
                     ) {
-                        Text("Test", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
-                        Text("Usuario", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
-                        Text("Fecha del Test", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
-                        Text("Puntaje", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
-                        Text("Nivel", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        Text(stringResource(R.string.test), fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        Text(stringResource(R.string.usuario), fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        Text(stringResource(R.string.fecha_del_test), fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        Text(stringResource(R.string.puntaje), fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        Text(stringResource(R.string.nivel), fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
                     }
                 }
                 items(filteredTests) { test ->
                     val index = filteredTests.indexOf(test)
                     val semaforoColor = when (test.nivel_ansiedad) {
-                        "leve" -> Color.Green
-                        "moderada" -> Color(0xFFFFA500)
-                        "grave" -> Color.Red
+                        stringResource(R.string.leve) -> Color.Green
+                        stringResource(R.string.moderada) -> Color(0xFFFFA500)
+                        stringResource(R.string.grave) -> Color.Red
                         else -> Color.Gray
                     }
                     Row(
@@ -260,7 +281,7 @@ fun DropdownMenuField(
     onOptionSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val displayOptions = listOf("Todos los datos") + options
+    val displayOptions = listOf(stringResource(R.string.todos_los_datos)) + options
 
     Box(modifier = Modifier.fillMaxWidth()) {
         Column {
@@ -277,7 +298,7 @@ fun DropdownMenuField(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = if (selectedOption.isEmpty()) "Seleccione una opción" else selectedOption,
+                    text = if (selectedOption.isEmpty()) stringResource(R.string.seleccione_una_opci_n) else selectedOption,
                     style = TextStyle(fontSize = 14.sp, color = Color.Black)
                 )
             }
@@ -345,7 +366,7 @@ fun DatePickerField(
                         .clickable { datePickerDialog.show() }
                 ) {
                     Text(
-                        text = selectedDate.ifEmpty { "Seleccione una fecha" },
+                        text = selectedDate.ifEmpty { stringResource(R.string.seleccione_una_fecha) },
                         style = TextStyle(fontSize = 14.sp, color = Color.Black)
                     )
                 }
@@ -368,3 +389,4 @@ private fun parseDate(date: String): Date? {
         null
     }
 }
+
