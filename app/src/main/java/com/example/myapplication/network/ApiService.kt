@@ -1,5 +1,7 @@
 package com.example.myapplication.network
 
+import com.example.myapplication.data.model.DiagnosticoResponse
+import com.example.myapplication.data.model.DiagnosticosRequest
 import com.example.myapplication.data.model.EnviarRespuestasRequest
 import com.example.myapplication.data.model.HeatMapResponse
 import com.example.myapplication.data.model.LoginRequest
@@ -27,5 +29,8 @@ interface ApiService {
 
     @GET("/heatmap")
     suspend fun getHeatMapData(): HeatMapResponse
-}
 
+    @POST("/Diagnosticos")
+    suspend fun enviarDatosDiagnostico(@Body request: DiagnosticosRequest): DiagnosticoResponse
+
+}
