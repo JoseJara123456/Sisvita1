@@ -36,10 +36,10 @@ def enviar_respuestas():
 
         tipotest_id = opcion.tipotest_id
 
-        # Calcular el nivel de ansiedad basado en el tipotest_id y el total_puntaje
+        
         nivel_ansiedad = calcular_nivel_ansiedad(tipotest_id, total_puntaje)
 
-        # Guardar en la tabla `test_realizados` una vez, fuera del bucle
+        
         test_realizado = testRealizados(
             fecha_test=datetime.now(),
             tipotest_id=tipotest_id,
@@ -50,7 +50,6 @@ def enviar_respuestas():
         db.session.add(test_realizado)
         db.session.commit()
 
-        # Preparar la respuesta
         data = {
             'message': 'Respuestas enviadas correctamente',
             'status': 200,
@@ -64,7 +63,6 @@ def enviar_respuestas():
         return jsonify({'message': 'Error al procesar las respuestas', 'error': str(e)}), 500
 
 def obtener_puntaje_por_opcion_id(opcion_id):
-    # Definir el mapeo de puntajes según la opcionId
     puntajes = {
         1: 0,
         2: 1,
@@ -81,8 +79,8 @@ def obtener_puntaje_por_opcion_id(opcion_id):
         13: 3
     }
 
-    # Obtener el puntaje correspondiente a la opcionId
-    return puntajes.get(opcion_id, 0)  # Retorna 0 si no se encuentra en el diccionario
+    
+    return puntajes.get(opcion_id, 0)  
 
 def calcular_nivel_ansiedad(tipotest_id, puntaje):
     if tipotest_id == 1:
